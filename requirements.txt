@@ -1,0 +1,2 @@
+-e git://github.com/django/django.git@f2b2a35699332108ef6f91abe296b35e0a9579bc#egg=Django
+virtualenv==15.0.1
