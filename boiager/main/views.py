@@ -1,5 +1,7 @@
-from django.shortcuts import render_to_response, redirect
-from django.contrib.auth import authenticate, login
+from django.shortcuts import render_to_response, redirect, render
+from django.contrib.auth import authenticate
+from django.contrib.auth import login as auth_login
+from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.models import Permission, User
 from django.contrib.auth.forms import AuthenticationForm
 from django.template import RequestContext
@@ -9,10 +11,10 @@ from django.template import RequestContext
 
 # Create your views here.
 def home(request):
-	return render_to_response('home.html', context_instance=RequestContext(request))
+	return render(request, 'home.html')
 
 def signup(request):
-	return render_to_response('home.html')
+	return render(request, 'home.html')
 
 def login(request):
 	if request.method == 'POST':
@@ -20,18 +22,18 @@ def login(request):
 		password = request.POST['password']
 		user = authenticate( username = username, password = password)
 		if user is not None:
-			login(request, user)
+			auth_login(request, user)
 			#aixo peta for fuck sake
 			return redirect('/', username=username)
 		else:
 			return redirect('/fail/')
 	else:
 		form = AuthenticationForm()
-		return render_to_response('login.html', {'form': form}, context_instance=RequestContext(request))
+		return render(request, 'login.html', {'form': form})
 
 def logout(request):
 	logout(request)
 	return redirect('home')
 
 def fail(request):
-	return render_to_response('fail.html', context_instance=RequestContext(request))
+	return render(request, 'fail.html')
