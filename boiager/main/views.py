@@ -1,5 +1,5 @@
 from django.shortcuts import render_to_response, redirect
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import Permission, User
 from django.contrib.auth.forms import AuthenticationForm
 from django.template import RequestContext
@@ -20,6 +20,8 @@ def login(request):
 		password = request.POST['password']
 		user = authenticate( username = username, password = password)
 		if user is not None:
+			login(request, user)
+			#aixo peta for fuck sake
 			return redirect('/', username=username)
 		else:
 			return redirect('/fail/')

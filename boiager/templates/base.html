@@ -11,9 +11,8 @@
 		<!-- condicionals segons authenticated o no.. -->
 		<h1>LOGO</h1>
 		hola1
-		{% if request.user  %}
-			hola2
-			{{ request.user.is_staff }}
+		{% if user %}
+			{{ user }}
 		{% endif %}
 		hola3
 		<a href="/login"><button>Login</button></a>
