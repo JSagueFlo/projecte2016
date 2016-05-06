@@ -47,10 +47,16 @@ class Boia(models.Model):
 		arrayYears.sort(reverse=True)
 		return arrayYears
 
-	def get_mesos(any):
-		return ''
-
-	def get_dies(any, mes):
+	def get_mesos(self, anyy):
+		arrayDades = Registre_boia.objects.filter(boia=self).filter(timestamp__year=anyy).values('timestamp')
+		arrayMesos = []
+		for date in arrayDades:
+			arrayMesos.append( int(date['timestamp'].month) )
+		arrayMesos = list(set(arrayMesos))
+		arrayMesos.sort(reverse=True)
+		return arrayMesos
+		
+	def get_dies(self, anyy, mes):
 		return ''
 
 	class Meta:
