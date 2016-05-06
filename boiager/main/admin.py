@@ -3,8 +3,10 @@ from .models import Centre, Boia
 
 # Register your models here.
 
+
 class CentreAdmin(admin.ModelAdmin):
-    list_display = ('name', 'nif')
+    list_display = ('name', 'nie')
+    
 
 class BoiaAdmin(admin.ModelAdmin):
     list_display = ('location_name', 'centre')
