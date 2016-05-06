@@ -4,14 +4,13 @@ from django.contrib.auth.models import User
 # Create your models here.
 class Centre(models.Model):
 	name = models.CharField(max_length=100, unique=True)
-	nie = models.CharField(max_length=10, unique=True, null=True)
-	description = models.CharField(max_length=5000, blank=True)
+	nie = models.CharField(max_length=10, unique=True, null=True, default=None)
+	description = models.CharField(max_length=5000, blank=True, null=True)
 	is_public = models.BooleanField(default=False)
 	lat = models.DecimalField(max_digits=9, decimal_places=6, default=None)
 	lng = models.DecimalField(max_digits=9, decimal_places=6, default=None)
-	img = models.CharField(max_length=100, blank=True)
+	img = models.CharField(max_length=100, blank=True, null=True)
 	user = models.ManyToManyField(User)
-
 
 	def __unicode__(self):
 		return u'%s' % self.name
@@ -19,17 +18,18 @@ class Centre(models.Model):
 	def __str__(self):
 		return self.name
 
+	def get_boies(self):
+		return Boia.objects.filter(centre=self)
+
 	class Meta:
 		db_table = "centres"
-
-	
 
 class Boia(models.Model):
 	centre = models.ForeignKey(Centre, default=None)
 	lat = models.DecimalField(max_digits=9, decimal_places=6)
 	lng = models.DecimalField(max_digits=9, decimal_places=6)
 	has_cam = models.BooleanField(default=True)
-	location_img = models.CharField(max_length=100, blank=True)
+	location_img = models.CharField(max_length=100, blank=True, null=True)
 	location_name = models.CharField(max_length=200)
 
 	def __unicode__(self):
@@ -38,5 +38,33 @@ class Boia(models.Model):
 	def __str__(self):
 		return self.location_name
 
+	def get_anys(self):
+		arrayDades = Registre_boia.objects.filter(boia=self).values('timestamp')
+		arrayYears = []
+		for date in arrayDades:
+			arrayYears.append( int(date['timestamp'].year) )
+		arrayYears = list(set(arrayYears))
+		arrayYears.sort(reverse=True)
+		return arrayYears
+
+	def get_mesos(any):
+		return ''
+
+	def get_dies(any, mes):
+		return ''
+
 	class Meta:
 		db_table = "boies"
+
+class Registre_boia(models.Model):
+	boia = models.ForeignKey(Boia, default=None)
+	timestamp = models.DateTimeField(auto_now=True)
+
+	def __unicode__(self):
+		return u''+str(self.timestamp)
+
+	def __str__(self):
+		return str(self.timestamp)
+
+	class Meta:
+		db_table = "registre_boia"
