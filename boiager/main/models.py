@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+import datetime
 
 # Create your models here.
 class Centre(models.Model):
@@ -22,7 +23,7 @@ class Centre(models.Model):
 		return Boia.objects.filter(centre=self)
 
 	class Meta:
-		db_table = "centres"
+		db_table = "centre"
 
 class Boia(models.Model):
 	centre = models.ForeignKey(Centre, default=None)
@@ -57,14 +58,27 @@ class Boia(models.Model):
 		return arrayMesos
 		
 	def get_dies(self, anyy, mes):
-		return ''
+		arrayDades = Registre_boia.objects.filter(boia=self).filter(timestamp__year=anyy).values('timestamp')
+		arrayDies = []
+		for date in arrayDades:
+			if mes == int(date['timestamp'].month):
+				arrayDies.append( int(date['timestamp'].day) )
+		arrayDies = list(set(arrayDies))
+		arrayDies.sort(reverse=True)
+		return arrayDies
+
+	def get_actual(self):
+		return Registre_boia.objects.latest('id')
 
 	class Meta:
-		db_table = "boies"
+		db_table = "boia"
 
 class Registre_boia(models.Model):
 	boia = models.ForeignKey(Boia, default=None)
 	timestamp = models.DateTimeField(auto_now=True)
+	tmp_air = models.DecimalField(max_digits=6, decimal_places=3, default=0.0)
+	tmp_water = models.DecimalField(max_digits=6, decimal_places=3, default=0.0)
+	wind_speed = models.DecimalField(max_digits=6, decimal_places=3, default=0.0)
 
 	def __unicode__(self):
 		return u''+str(self.timestamp)
@@ -74,3 +88,34 @@ class Registre_boia(models.Model):
 
 	class Meta:
 		db_table = "registre_boia"
+
+class Token(models.Model):
+	centre = models.ForeignKey(Centre, default=None)
+	token = models.CharField(max_length=36, unique=True)
+	used = models.BooleanField(default=False)
+	being_used = models.BooleanField(default=False)
+
+	def __unicode__(self):
+		return u''+self.token
+
+	def __str__(self):
+		return self.token
+
+	class Meta:
+		db_table = "token"
+
+class Slider(models.Model):
+	title = models.CharField(max_length=100, default='Title')
+	img = models.CharField(max_length=100, null=True, blank=True)
+	label = models.CharField(max_length=30, unique=True, default='Label')
+	synopsis = models.CharField(max_length=1000, null=True, blank=True)
+	filename = models.CharField(max_length=100, unique=True, default='index.html')
+
+	def __unicode__(self):
+		return u''+self.title
+
+	def __str__(self):
+		return self.title
+
+	class Meta:
+		db_table = "slider"

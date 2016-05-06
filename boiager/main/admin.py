@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Centre, Boia, Registre_boia
+from .models import Centre, Boia, Registre_boia, Token, Slider
 
 # Register your models here.
 
@@ -14,6 +14,14 @@ class BoiaAdmin(admin.ModelAdmin):
 class RegistreBoiaAdmin(admin.ModelAdmin):
 	list_display = ('boia', 'timestamp')
 
+class TokenAdmin(admin.ModelAdmin):
+	list_display = ('token', 'centre')
+
+class SliderAdmin(admin.ModelAdmin):
+	list_display = ('label', 'title')
+
 admin.site.register(Centre, CentreAdmin)
 admin.site.register(Boia, BoiaAdmin)
 admin.site.register(Registre_boia, RegistreBoiaAdmin)
+admin.site.register(Token, TokenAdmin)
+admin.site.register(Slider, SliderAdmin)
