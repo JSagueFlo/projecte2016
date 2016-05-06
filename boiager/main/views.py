@@ -9,28 +9,27 @@ from django.template import RequestContext
 
 # Create your views here.
 def home(request):
-	return render_to_response('home.html')
+	return render_to_response('home.html', context_instance=RequestContext(request))
 
 def signup(request):
 	return render_to_response('home.html')
 
 def login(request):
 	if request.method == 'POST':
-		user = request.POST['username']
+		username = request.POST['username']
 		password = request.POST['password']
-		user = authenticate( user = user, password = password)
+		user = authenticate( username = username, password = password)
 		if user is not None:
-			return redirect('home')
+			return redirect('/', username=username)
 		else:
-			return redirect('fail')
+			return redirect('/fail/')
 	else:
 		form = AuthenticationForm()
-
-	return render_to_response('login.html', {'form': form}, context_instance=RequestContext(request))
+		return render_to_response('login.html', {'form': form}, context_instance=RequestContext(request))
 
 def logout(request):
 	logout(request)
 	return redirect('home')
 
 def fail(request):
-	return render_to_response('fail.html')
+	return render_to_response('fail.html', context_instance=RequestContext(request))
