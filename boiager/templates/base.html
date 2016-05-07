@@ -4,19 +4,53 @@
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<title>Boiager</title>
-	<link rel="stylesheet" href="">
+    <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="/static/vendor/materialize/css/materialize.min.css">
+	<link rel="stylesheet" href="/static/css/styles.css">
 </head>
 <body>
-	<header>
-		<!-- condicionals segons authenticated o no.. -->
-		<h1>LOGO</h1>
-		{% if user %}
-			{{ user }}
-		{% endif %}
-		<a href="/login"><button>Login</button></a>
-		<a href="/signup"><button>SignUp</button></a>
-		<a href="/logout"><button>Logout</button></a>
-	</header>
-	{% block form %}{% endblock %}
+    <div class="navbar-fixed">
+        <nav>
+            <header class="nav-wrapper teal">
+                <!-- condicionals segons authenticated o no.. -->
+                <a href="/" class="brand-logo" id="logo">Boiager</a>
+                <ul id="nav-mobile" class="right">
+                	<li><a href="#">Item1</a></li>
+                    <li><a href="#">Item2</a></li>
+                    <li><a href="#">Item3</a></li>
+                {% if user.is_authenticated %}
+                    <li><a class="dropdown-button" href="#!" data-activates="user-dropdown">{{ user }}<i class="material-icons right">arrow_drop_down</i></a></li>
+                    
+                    <ul id="user-dropdown" class="dropdown-content">
+                        <li><a href="/logout">Logout</a></li>
+                        <li><a href="/change_password">Change Password</a></li>
+                        <li><a href="/profile_edit">Profile Edit</a></li>
+                    </ul>
+                {% else %}
+                    <li><a class="btn waves-effect waves-light light-green" href="/signup">Signup</a></li>
+                    <li><a class="btn waves-effect waves-light light-green" href="/login">Login</a></li>
+                {% endif %}
+                </ul>
+            </header>
+        </nav>
+    </div>
+    <main class="container">
+        {% block content %}{% endblock %}
+    </main>
+    <footer class="page-footer teal">
+        <div class="footer-copyright">
+            <div class="center">
+                © 2016 Copyright Text
+            </div>
+        </div>
+    </footer>
+    <script src="https://code.jquery.com/jquery-2.2.3.min.js" integrity="sha256-a23g1Nt4dtEYOj7bR+vTu7+T8VP13humZFBJNIYoEJo=" crossorigin="anonymous"></script>
+    <script src="/static/vendor/materialize/js/materialize.min.js"></script>
+    <script>
+        $(function() {
+            $(".button-collapse").sideNav();
+        });
+    </script>
+    {% block scripts %}{% endblock %}
 </body>
 </html>
