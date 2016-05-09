@@ -29,6 +29,7 @@ def signup(request):
 	if request.method == 'POST':
 		if form.is_valid():
 			user = form.save()
+			
 			auth_login(request, user)
 			return redirect('/')
 	context = {'form': form, 'sliders': sliders}
