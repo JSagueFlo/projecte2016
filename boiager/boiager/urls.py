@@ -24,10 +24,10 @@ urlpatterns = [
     url(r'^login/$', login),
     url(r'^logout/$', logout),
     url(r'^signup/$', signup),
-    url(r'^fail/$', fail)
     #url('^', include('django.contrib.auth.urls')),
-    #url(r'^centre/<idcentre>/ $', home),
-    #url(r'^centre/<idcentre>/boia/<idboia>/$', home),
+    url(r'^centres/$', centres),
+    url(r'^centre/([0-9]+)/$', centre),
+    url(r'^centre/([0-9]+)/([0-9]+)/$', boia),
     #url(r'^centre/<idcentre>/boia/<idboia>/<any>/$', home),
     #url(r'^centre/<idcentre>/boia/<idboia>/<any>/<mes>$', home),
     #url(r'^centre/<idcentre>/boia/<idboia>/<any>/<mes>/<dia>/$', home),

@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="section">
+        <b>Centres</b>
+    </div>
+    <div class="divider"></div>
+    {% if centres_publics %}
+        <div class="section">
+        <h5>Centres Públics</h5>
+        {% for centre_public in centres_publics %}
+            <p><a href="/centre/{{centre_public.id}}">{{ centre_public.name }}</a> {{ centre_public.get_boies_count }}</p>
+        {% endfor %}
+        </div>
+    {% endif %}
+    {% if centres_privats %}
+        <div class="section">
+        <h5>Centres Privats<br></h5>
+        {% for centre_privat in centres_privats %}
+            <p><a href="/centre/{{centre_privat.id}}">{{ centre_privat.name }}</a> {{ centre_privat.get_boies_count }}</p>
+        {% endfor %}
+        </div>
+    {% endif %}
+{% endblock %}

@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
-import datetime
+from django.db.models import Max, Min
+from datetime import datetime, date, timedelta as td
 
 # Create your models here.
 class Centre(models.Model):
@@ -8,10 +9,10 @@ class Centre(models.Model):
 	nie = models.CharField(max_length=10, unique=True, null=True, default=None)
 	description = models.CharField(max_length=5000, blank=True, null=True)
 	is_public = models.BooleanField(default=False)
-	lat = models.DecimalField(max_digits=9, decimal_places=6, default=None)
-	lng = models.DecimalField(max_digits=9, decimal_places=6, default=None)
+	lat = models.DecimalField(max_digits=10, decimal_places=7, default=None)
+	lng = models.DecimalField(max_digits=10, decimal_places=7, default=None)
 	img = models.CharField(max_length=100, blank=True, null=True)
-	user = models.ManyToManyField(User)
+	user = models.ManyToManyField(User, blank=True, null=True)
 
 	def __unicode__(self):
 		return u'%s' % self.name
@@ -22,13 +23,25 @@ class Centre(models.Model):
 	def get_boies(self):
 		return Boia.objects.filter(centre=self)
 
+	def get_boies_count(self):
+		return len(Boia.objects.filter(centre=self))
+
+	def get_map_coords(self):
+		boies = self.get_boies()
+		coords = boies.aggregate(max_lat=Max('lat'), max_lng=Max('lng'), min_lat=Min('lat'), min_lng=Min('lng'))
+		lat = (coords['max_lat'] + coords['min_lat'])/2
+		lng = (coords['max_lng'] + coords['min_lng'])/2
+		map_centre = {'lat': lat, 'lng': lng}
+		return map_centre
+
 	class Meta:
 		db_table = "centre"
 
+
 class Boia(models.Model):
 	centre = models.ForeignKey(Centre, default=None)
-	lat = models.DecimalField(max_digits=9, decimal_places=6)
-	lng = models.DecimalField(max_digits=9, decimal_places=6)
+	lat = models.DecimalField(max_digits=10, decimal_places=7)
+	lng = models.DecimalField(max_digits=10, decimal_places=7)
 	has_cam = models.BooleanField(default=True)
 	location_img = models.CharField(max_length=100, blank=True, null=True)
 	location_name = models.CharField(max_length=200)
@@ -67,11 +80,31 @@ class Boia(models.Model):
 		arrayDies.sort(reverse=True)
 		return arrayDies
 
+	def get_dates(self):
+		d1 = Registre_boia.objects.first().now().date()
+		d2 = Registre_boia.objects.last().now().date()
+		delta = d2 - d1
+		dates = {}
+
+		for i in range(delta.days + 1):
+			dia = (d1 + td(days=i))
+			year = dia.year
+			month = dia.month
+			day = dia.day
+			if year not in dates.keys():
+				dates[year] = {}
+			if month not in dates[year].keys():
+				dates[year][month] = {}
+			if day not in dates[year][month].keys():
+				dates[year][month][day] = {}
+		return dates
+
 	def get_actual(self):
 		return Registre_boia.objects.latest('id')
 
 	class Meta:
 		db_table = "boia"
+
 
 class Registre_boia(models.Model):
 	boia = models.ForeignKey(Boia, default=None)
@@ -89,6 +122,7 @@ class Registre_boia(models.Model):
 	class Meta:
 		db_table = "registre_boia"
 
+
 class Token(models.Model):
 	centre = models.ForeignKey(Centre, default=None)
 	token = models.CharField(max_length=36, unique=True)
@@ -103,6 +137,7 @@ class Token(models.Model):
 
 	class Meta:
 		db_table = "token"
+
 
 class Slider(models.Model):
 	title = models.CharField(max_length=100, default='Title')

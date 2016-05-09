@@ -2,7 +2,17 @@ body {
     display: flex;
     min-height: 100vh;
     flex-direction: column;
-  }
+    color: #888;
+    font-weight: 300
+}
+
+a {
+	color: #009688;
+}
+
+b {
+	font-weight: 200;
+}
 
 main {
     flex: 1 0 auto;
@@ -10,9 +20,41 @@ main {
 
 #logo {
 	margin-left: 20px;
+	margin-right: 60px;
+}
+
+nav .brand-logo {
+	position: relative;
 }
 
 .errorlist {
-	color: red;
+	color: #f44336;
 	font-size: 12px;
+}
+
+#user-dropdown-btn {
+	/*width: 190px;*/
+	border-left: 10px solid white;
+}
+
+#user-dropdown {
+	/*width: 200px;*/
+}
+
+#user-dropdown > li > a {
+	font-size: 14px;
+}
+
+#map {
+	width: 100%;
+	height: 500px;
+}
+
+img {
+	width: 100%;
+	height: auto;
+}
+
+.menu-item:hover {
+	border-top: 3px solid #80cbc4;
 }
