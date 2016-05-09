@@ -17,6 +17,23 @@
             </div>
         </div>
     </div>
+    <div style="font-weight: bold; color: black; padding: 20px;">
+        <div style="background: red;display: inline-block;">
+            <div>T_aigua_actual: {{ latest.tmp_water|floatformat:1 }}</div>
+            <div>T_aigua_max: {{ max_min.tmp_aigua_maxima|floatformat:1  }}</div>
+            <div>T_aigua_min: {{ max_min.tmp_aigua_minima|floatformat:1  }}</div>
+        </div>
+        <div style="background: green;display: inline-block;">
+            <div>T_aire_actual: {{ latest.tmp_air|floatformat:1  }}</div>
+            <div>T_aire_maxima: {{ max_min.tmp_aire_maxima|floatformat:1  }}</div>
+            <div>T_aire_minima: {{ max_min.tmp_aire_minima|floatformat:1  }}</div>
+        </div>
+        <div style="background: yellow;display: inline-block;">
+            <div>Wind_speed_actual: {{ latest.wind_speed|floatformat:1  }} m/s</div>
+            <div>Wind_speed_maxima: {{ max_min.wind_speed_maxima|floatformat:1  }}</div>
+            <div>Wind_speed_minima: {{ max_min.wind_speed_minima|floatformat:1  }}</div>
+        </div>
+    </div>
 {% endblock %}
 {% block scripts %}
     <script>

@@ -6,7 +6,6 @@ from .models import Centre, Boia, Registre_boia, Token, Slider
 
 class CentreAdmin(admin.ModelAdmin):
     list_display = ('name', 'nie')
-    
 
 class BoiaAdmin(admin.ModelAdmin):
     list_display = ('location_name', 'centre')

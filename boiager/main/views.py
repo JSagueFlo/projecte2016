@@ -28,9 +28,10 @@ def signup(request):
 	form = SignupForm(data=request.POST or None)
 	if request.method == 'POST':
 		if form.is_valid():
-			user = form.save()
-			
-			auth_login(request, user)
+			new_user = form.save()
+			if new_user != None:
+				new_user = authenticate( username=form.cleaned_data['username'], password=form.cleaned_data['password1'])
+				auth_login(request, new_user)
 			return redirect('/')
 	context = {'form': form, 'sliders': sliders}
 	return render(request, 'signup.html', context)
@@ -63,6 +64,7 @@ def logout(request):
 def centres(request):
 	sliders = getSliders()
 	centres_privats = None
+
 	if request.user.is_authenticated:
 		centres_privats = getUserCentres(request)
 	centres_publics = getPublicCentres()
@@ -107,7 +109,7 @@ def boia(request, id_centre, id_boia):
 	try:
 		boia = Boia.objects.get(pk=int(id_boia),centre=centre)
 	except:
-		return redirect('/centres/' + centre.id)
+		return redirect('/centre/' + str(centre.id) +'/' )
 
 	# User is allowed to see centre?
 	if not centre.is_public:
@@ -117,5 +119,11 @@ def boia(request, id_centre, id_boia):
 			# TODO Show not permission message
 			return redirect('/')
 
-	context = {'sliders': sliders, 'centre': centre, 'boia': boia}
+	try:
+		max_min = boia.get_registres_max_min_dia()
+		latest = boia.get_registres_actual()
+	except:
+		return redirect('/')
+
+	context = {'sliders': sliders, 'centre': centre, 'boia': boia, 'max_min': max_min, 'latest': latest}
 	return render(request, 'boia.html', context)

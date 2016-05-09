@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.db.models import Max, Min
+from django.db.models import Max, Min, Avg
 from datetime import datetime, date, timedelta as td
 
 # Create your models here.
@@ -99,8 +99,21 @@ class Boia(models.Model):
 				dates[year][month][day] = {}
 		return dates
 
-	def get_actual(self):
-		return Registre_boia.objects.latest('id')
+	def get_registres_actual(self):
+		return Registre_boia.objects.filter(boia=self).last()
+
+	def get_registres_max_min_dia(self):
+		today = date.today()
+		registres_today = Registre_boia.objects.filter(timestamp__contains=today)
+		return Registre_boia.objects.filter(boia=self)\
+									.filter(timestamp__contains=today)\
+		                            .aggregate( tmp_aigua_maxima=Max('tmp_water'),\
+		                            			tmp_aigua_minima=Min('tmp_water'),\
+		                            			tmp_aire_maxima=Max('tmp_air'),\
+		                            			tmp_aire_minima=Min('tmp_air'),\
+		                            			wind_speed_maxima=Max('wind_speed'),\
+		                            			wind_speed_minima=Min('wind_speed')
+		                            )
 
 	class Meta:
 		db_table = "boia"
@@ -108,7 +121,10 @@ class Boia(models.Model):
 
 class Registre_boia(models.Model):
 	boia = models.ForeignKey(Boia, default=None)
-	timestamp = models.DateTimeField(auto_now=True)
+	#
+	# Important canviar auto_now en mode de produccio
+	#
+	timestamp = models.DateTimeField(auto_now=False)
 	tmp_air = models.DecimalField(max_digits=6, decimal_places=3, default=0.0)
 	tmp_water = models.DecimalField(max_digits=6, decimal_places=3, default=0.0)
 	wind_speed = models.DecimalField(max_digits=6, decimal_places=3, default=0.0)
