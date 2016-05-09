@@ -81,8 +81,8 @@ class Boia(models.Model):
 		return arrayDies
 
 	def get_dates(self):
-		d1 = Registre_boia.objects.first().now().date()
-		d2 = Registre_boia.objects.last().now().date()
+		d1 = Registre_boia.objects.first().date()
+		d2 = Registre_boia.objects.last().date()
 		delta = d2 - d1
 		dates = {}
 
