@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models import Max, Min, Avg
+from django.utils.timezone import localtime, now
 from datetime import datetime, date, timedelta as td
 
 # Create your models here.
@@ -103,7 +104,7 @@ class Boia(models.Model):
 		return Registre_boia.objects.filter(boia=self).last()
 
 	def get_registres_max_min_dia(self):
-		today = date.today()
+		today = localtime(now()).date()
 		registres_today = Registre_boia.objects.filter(timestamp__contains=today)
 		return Registre_boia.objects.filter(boia=self)\
 									.filter(timestamp__contains=today)\

@@ -58,3 +58,63 @@ img {
 .menu-item:hover {
 	border-top: 3px solid #80cbc4;
 }
+
+.statscard {
+	margin-top: 1em;
+	margin-bottom: 1em;
+	text-align: left;
+}
+
+.statscard-title {
+	text-align: left;
+}
+
+.statscard-title > i {
+	margin-right: 1em;
+}
+
+.statscard-divider {
+	
+}
+
+.statscard-label {
+	font-size: 9px;
+	line-height: 0.5;
+	margin-bottom: 0;
+}
+
+.statscard-label_actual {
+	font-size: 9px;
+	line-height: 0.5;
+	margin-bottom: 0;
+	margin-top: 2em;
+}
+
+.statscard-stat {
+	font-size: 24px;
+	font-weight: 200;
+	margin-top: 0;
+	margin-bottom: 0;
+}
+
+.statscard-stat_actual {
+	font-size: 36px;
+	font-weight: 300;
+	margin-top: 0;
+	margin-bottom: 0.5em;
+}
+
+.statscard-unit {
+	font-size: 14px;
+}
+
+.statscard-unit_actual {
+	font-size: 18px;
+}
+
+
+.wi-celsius {
+	font-size: 21px;
+	position: relative;
+	top: 3px;
+}

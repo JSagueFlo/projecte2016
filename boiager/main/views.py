@@ -29,7 +29,7 @@ def signup(request):
 	if request.method == 'POST':
 		if form.is_valid():
 			new_user = form.save()
-			if new_user != None:
+			if new_user is not None:
 				new_user = authenticate( username=form.cleaned_data['username'], password=form.cleaned_data['password1'])
 				auth_login(request, new_user)
 			return redirect('/')
@@ -96,6 +96,10 @@ def centre(request, id_centre):
 	context = {'sliders': sliders, 'centre': centre, 'boies': boies, 'data': data, 'map_centre': map_centre}
 	return render(request, 'centre.html', context)
 
+
+################
+## BOIA VIEWS ##
+################
 
 def boia(request, id_centre, id_boia):
 	sliders = getSliders()
