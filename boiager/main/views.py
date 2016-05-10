@@ -134,8 +134,9 @@ def boia(request, id_centre, id_boia):
 	try:
 		max_min = boia.get_registres_max_min_dia()
 		latest = boia.get_registres_actual()
+		dates = boia.get_dates()
 	except:
 		return redirect('/')
 
-	context = {'sliders': sliders, 'centre': centre, 'boia': boia, 'max_min': max_min, 'latest': latest}
+	context = {'sliders': sliders, 'centre': centre, 'boia': boia, 'max_min': max_min, 'latest': latest, 'dates': dates}
 	return render(request, 'boia.html', context)
