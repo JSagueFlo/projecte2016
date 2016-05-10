@@ -113,6 +113,24 @@ img {
 }
 
 
+.message {
+	color: #888;
+	font-size: 14px;
+}
+
+.success {
+	background-color: #c8e6c9;
+}
+
+.warning {
+	background-color: #ffcc80;
+}
+
+.error {
+	background-color: #ef9a9a;
+}
+
+
 .wi-celsius {
 	font-size: 21px;
 	position: relative;

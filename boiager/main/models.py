@@ -2,7 +2,15 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models import Max, Min, Avg
 from django.utils.timezone import localtime, now
+from django.db.models.signals import pre_save
+from django.dispatch import receiver
 from datetime import datetime, date, timedelta as td
+
+
+@receiver(pre_save)
+def my_callback(sender, instance, *args, **kwargs):
+    instance.timestamp = now()
+
 
 # Create your models here.
 class Centre(models.Model):
@@ -28,10 +36,14 @@ class Centre(models.Model):
 		return len(Boia.objects.filter(centre=self))
 
 	def get_map_coords(self):
-		boies = self.get_boies()
-		coords = boies.aggregate(max_lat=Max('lat'), max_lng=Max('lng'), min_lat=Min('lat'), min_lng=Min('lng'))
-		lat = (coords['max_lat'] + coords['min_lat'])/2
-		lng = (coords['max_lng'] + coords['min_lng'])/2
+		try:
+			boies = self.get_boies()
+			coords = boies.aggregate(max_lat=Max('lat'), max_lng=Max('lng'), min_lat=Min('lat'), min_lng=Min('lng'))
+			lat = (coords['max_lat'] + coords['min_lat'])/2
+			lng = (coords['max_lng'] + coords['min_lng'])/2
+		except:
+			lat = self.lat
+			lng = self.lng
 		map_centre = {'lat': lat, 'lng': lng}
 		return map_centre
 
