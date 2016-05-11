@@ -1,4 +1,4 @@
-from django.db import models
+from django.db import models, connection
 from django.contrib.auth.models import User
 from django.db.models import Max, Min, Avg
 from django.utils.timezone import localtime, now
@@ -112,8 +112,33 @@ class Boia(models.Model):
 				dates[year][month][day] = {}
 		return dates
 
-	def get_registres_actual(self):
+	def get_registre_actual(self):
 		return Registre_boia.objects.filter(boia=self).last()
+
+	def get_registres_anuals(self, year):
+		month = connection.ops.date_trunc_sql('month', 'timestamp')
+		registres_year = Registre_boia.objects.filter(boia=self).filter(timestamp__contains=year)
+		return registres_year.extra({'month': month}).values('month').annotate(\
+																				tmp_aigua=Avg('tmp_water'),\
+																			   	tmp_aire=Avg('tmp_air'),\
+																			   	wind_speed=Avg('wind_speed')\
+																			   )
+
+	def get_registres_mensuals(self, year, month):
+		month = str(month) if month >= 10 else '0' + str(month)
+		day = connection.ops.date_trunc_sql('day', 'timestamp')
+		registres_month = Registre_boia.objects.filter(boia=self).filter(timestamp__contains=str(year)+'-'+str(month))
+		return registres_month.extra({'day': day}).values('day').annotate(\
+																			tmp_aigua=Avg('tmp_water'),\
+																			tmp_aire=Avg('tmp_air'),\
+																			wind_speed=Avg('wind_speed')\
+																		)
+
+	def get_registres_diaris(self, year, month, day):
+		month = str(month) if month >= 10 else '0' + str(month)
+		day = str(day) if day >= 10 else '0' + str(day)
+		registres_diaris = Registre_boia.objects.filter(boia=self).filter(timestamp__contains=str(year)+'-'+str(month)+'-'+str(day))
+		return registres_diaris.values('tmp_water','tmp_air','wind_speed')
 
 	def get_registres_max_min_dia(self):
 		today = localtime(now()).date()

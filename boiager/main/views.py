@@ -133,7 +133,7 @@ def boia(request, id_centre, id_boia):
 
 	try:
 		max_min = boia.get_registres_max_min_dia()
-		latest = boia.get_registres_actual()
+		latest = boia.get_registre_actual()
 		dates = boia.get_dates()
 	except:
 		return redirect('/')
