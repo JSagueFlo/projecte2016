@@ -1,4 +1,6 @@
+import json
 from django.core import serializers
+from django.core.serializers.json import DjangoJSONEncoder
 from django.shortcuts import render_to_response, redirect, render
 from django.contrib import messages
 from django.contrib.auth import authenticate
@@ -7,7 +9,7 @@ from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.models import Permission, User
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from .forms import SignupForm
-from .functions import getSliders, getUserCentres, getPublicCentres
+from .functions import getSliders, getUserCentres, getPublicCentres, check_centre, check_boia
 from .models import Centre, Slider, Boia
 
 #from django.shortcuts import get_object_or_404
@@ -82,19 +84,7 @@ def centres(request):
 def centre(request, id_centre):
 	sliders = getSliders()
 	# Centre exists?
-	try:
-		centre = Centre.objects.get(pk=int(id_centre))
-	except:
-		messages.add_message(request, messages.WARNING, "El centre al que intentes accedir no existeix!")
-		return redirect('/centres')
-
-	if not centre.is_public:
-		# User permission?
-		try:
-			Centre.objects.filter(user=request.user)
-		except:
-			messages.add_message(request, messages.WARNING, "No tens permís per accedir a aquest centre!")
-			return redirect('/centres')
+	centre = check_centre(request, id_centre)
 
 	boies = Boia.objects.filter(centre=centre)
 	data = serializers.serialize('json', boies)
@@ -109,30 +99,12 @@ def centre(request, id_centre):
 
 def boia(request, id_centre, id_boia):
 	sliders = getSliders()
-	# Centre exists?
-	try:
-		centre = Centre.objects.get(pk=int(id_centre))
-	except:
-		messages.add_message(request, messages.WARNING, "El centre al que intentes accedir no existeix!")
-		return redirect('/centres')
 
-	# Boia exists and centre has boia?
-	try:
-		boia = Boia.objects.get(pk=int(id_boia),centre=centre)
-	except:
-		messages.add_message(request, messages.WARNING, "La boia a la que intentes accedir no existeix!")
-		return redirect('/centre/' + str(centre.id) +'/' )
-
-	# User is allowed to see centre?
-	if not centre.is_public:
-		try:
-			Centre.objects.get(user=request.user)
-		except:
-			messages.add_message(request, messages.WARNING, "No tens permís per accedir a aquesta boia!")
-			return redirect('/')
+	centre = check_centre(request, id_centre)
+	boia = check_boia(request, centre, id_boia)
 
 	try:
-		max_min = boia.get_registres_max_min_dia()
+		max_min = boia.get_registres_max_min_today()
 		latest = boia.get_registre_actual()
 		dates = boia.get_dates()
 	except:
@@ -140,3 +112,21 @@ def boia(request, id_centre, id_boia):
 
 	context = {'sliders': sliders, 'centre': centre, 'boia': boia, 'max_min': max_min, 'latest': latest, 'dates': dates}
 	return render(request, 'boia.html', context)
+
+def boia_any(request, id_centre, id_boia, year):
+	sliders = getSliders()
+
+	centre = check_centre(request, id_centre)
+	boia = check_boia(request, centre, id_boia)
+	boia.get_registres_anuals(year)
+
+
+	max_min = boia.get_registres_max_min_year(year)
+	dates = boia.get_dates()
+	mitjanes = boia.get_registres_anuals(year)
+	mitjanes = json.dumps(mitjanes)
+
+
+	context = {'sliders': sliders, 'centre': centre, 'boia': boia, 'max_min': max_min, 'dates': dates, 'mitjanes': mitjanes}
+
+	return render(request, 'boia_chart.html', context)

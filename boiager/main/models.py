@@ -5,6 +5,7 @@ from django.utils.timezone import localtime, now
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
 from datetime import datetime, date, timedelta as td
+import calendar
 
 
 @receiver(pre_save)
@@ -118,11 +119,21 @@ class Boia(models.Model):
 	def get_registres_anuals(self, year):
 		month = connection.ops.date_trunc_sql('month', 'timestamp')
 		registres_year = Registre_boia.objects.filter(boia=self).filter(timestamp__contains=year)
-		return registres_year.extra({'month': month}).values('month').annotate(\
-																				tmp_aigua=Avg('tmp_water'),\
-																			   	tmp_aire=Avg('tmp_air'),\
-																			   	wind_speed=Avg('wind_speed')\
-																			   )
+		registres = registres_year.extra({'month': month}).values('month').annotate(\
+																		tmp_aigua=Avg('tmp_water'),\
+																		tmp_aire=Avg('tmp_air'),\
+																		wind_speed=Avg('wind_speed')\
+																	   )
+		reg = []
+		for registre in registres:
+			reg.append({
+				'mes': calendar.month_name[registre['month'].month],
+				'tmp_aigua': registre['tmp_aigua'],
+				'tmp_aire': registre['tmp_aire'],
+				'wind_speed': registre['wind_speed']
+			})
+
+		return reg
 
 	def get_registres_mensuals(self, year, month):
 		month = str(month) if month >= 10 else '0' + str(month)
@@ -140,9 +151,8 @@ class Boia(models.Model):
 		registres_diaris = Registre_boia.objects.filter(boia=self).filter(timestamp__contains=str(year)+'-'+str(month)+'-'+str(day))
 		return registres_diaris.values('tmp_water','tmp_air','wind_speed')
 
-	def get_registres_max_min_dia(self):
+	def get_registres_max_min_today(self):
 		today = localtime(now()).date()
-		registres_today = Registre_boia.objects.filter(timestamp__contains=today)
 		return Registre_boia.objects.filter(boia=self)\
 									.filter(timestamp__contains=today)\
 		                            .aggregate( tmp_aigua_maxima=Max('tmp_water'),\
@@ -152,6 +162,17 @@ class Boia(models.Model):
 		                            			wind_speed_maxima=Max('wind_speed'),\
 		                            			wind_speed_minima=Min('wind_speed')
 		                            )
+
+	def get_registres_max_min_year(self, year):
+		return Registre_boia.objects.filter(boia=self) \
+			.filter(timestamp__contains=year) \
+			.aggregate(tmp_aigua_maxima=Max('tmp_water'), \
+					   tmp_aigua_minima=Min('tmp_water'), \
+					   tmp_aire_maxima=Max('tmp_air'), \
+					   tmp_aire_minima=Min('tmp_air'), \
+					   wind_speed_maxima=Max('wind_speed'), \
+					   wind_speed_minima=Min('wind_speed')
+					   )
 
 	class Meta:
 		db_table = "boia"

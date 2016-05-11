@@ -28,7 +28,7 @@ urlpatterns = [
     url(r'^centres/$', centres),
     url(r'^centre/([0-9]+)/$', centre),
     url(r'^centre/([0-9]+)/([0-9]+)/$', boia),
-    #url(r'^centre/<idcentre>/boia/<idboia>/<any>/$', home),
+    url(r'^centre/([0-9]+)/([0-9]+)/([0-9]+)/$', boia_any),
     #url(r'^centre/<idcentre>/boia/<idboia>/<any>/<mes>$', home),
     #url(r'^centre/<idcentre>/boia/<idboia>/<any>/<mes>/<dia>/$', home),
 ]
