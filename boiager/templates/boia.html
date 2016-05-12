@@ -83,30 +83,7 @@
 
 {% block scripts %}
     <script>
-        var dates = {{dates|safe}};
 
-        $('#sidebar').append('<ul id="menu"></ul>');
-
-        for (var any in dates) {
-            var item_any = $('<li></li>').text(any).append('<ul class="mesos"></ul>').attr('id', any);
-            $('#menu').prepend(item_any);
-            //dates_menu.anys.push(any);
-            //dates_menu[any] = {'mesos': []};
-            for (var mes in dates[any]) {
-                var item_mes = $('<li></li>').text(mes).append('<ul class="dies"></ul>').attr('id',  any + '-' + mes);
-                $('#menu:first-child .mesos').prepend(item_mes);
-                //dates_menu[any].mesos.push(mes);
-                //dates_menu[any][mes] = {'dies': []};
-                for (var dia in dates[any][mes]) {
-                    var item_dia = $('<li></li>').text(dia).attr('id', any +'-'+ mes +'-'+ dia);
-                    $('#menu:first-child .dies').prepend(item_dia);
-                    //dates_menu[any][mes].dies.push(dia);
-                }
-                //dates_menu[any][mes].dies.reverse();
-            }
-            //dates_menu[any].mesos.reverse();
-        }
-        //dates_menu.anys.reverse();
 
 
 

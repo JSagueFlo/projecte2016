@@ -6,6 +6,9 @@ from django.db.models.signals import pre_save
 from django.dispatch import receiver
 from datetime import datetime, date, timedelta as td
 import calendar
+import locale
+
+locale.setlocale(locale.LC_ALL, 'ca_ES')
 
 
 @receiver(pre_save)
@@ -135,21 +138,48 @@ class Boia(models.Model):
 
 		return reg
 
+
 	def get_registres_mensuals(self, year, month):
 		month = str(month) if month >= 10 else '0' + str(month)
 		day = connection.ops.date_trunc_sql('day', 'timestamp')
 		registres_month = Registre_boia.objects.filter(boia=self).filter(timestamp__contains=str(year)+'-'+str(month))
-		return registres_month.extra({'day': day}).values('day').annotate(\
+		registres = registres_month.extra({'day': day}).values('day').annotate(\
 																			tmp_aigua=Avg('tmp_water'),\
 																			tmp_aire=Avg('tmp_air'),\
 																			wind_speed=Avg('wind_speed')\
 																		)
+		reg = []
+		for registre in registres:
+			reg.append({
+				'dia': registre['day'].day,
+				'tmp_aigua': registre['tmp_aigua'],
+				'tmp_aire': registre['tmp_aire'],
+				'wind_speed': registre['wind_speed']
+			})
+
+		return reg
+
 
 	def get_registres_diaris(self, year, month, day):
 		month = str(month) if month >= 10 else '0' + str(month)
 		day = str(day) if day >= 10 else '0' + str(day)
-		registres_diaris = Registre_boia.objects.filter(boia=self).filter(timestamp__contains=str(year)+'-'+str(month)+'-'+str(day))
-		return registres_diaris.values('tmp_water','tmp_air','wind_speed')
+		registres_month = Registre_boia.objects.filter(boia=self).filter(timestamp__contains=str(year) + '-' + str(month))
+		registres =  registres_month.extra({'hour': 'HOUR(timestamp)'}).values('hour').annotate(\
+																						tmp_aigua=Avg('tmp_water'),\
+																						tmp_aire=Avg('tmp_air'),\
+																						wind_speed=Avg('wind_speed')\
+																						)
+		reg = []
+		for registre in registres:
+			reg.append({
+				'hora': registre['hour'].hour,
+				'tmp_aigua': registre['tmp_aigua'],
+				'tmp_aire': registre['tmp_aire'],
+				'wind_speed': registre['wind_speed']
+			})
+
+		return reg
+
 
 	def get_registres_max_min_today(self):
 		today = localtime(now()).date()
@@ -163,16 +193,29 @@ class Boia(models.Model):
 		                            			wind_speed_minima=Min('wind_speed')
 		                            )
 
-	def get_registres_max_min_year(self, year):
+
+	def get_registres_max_min_avg(self, year=None, month=None, day=None):
+		string_data = ''
+		if year is not None:
+			string_data += str(year)
+			if month is not None:
+				string_data += '-' + (str(month) if month >= 10 else '0' + str(month))
+				if day is not None:
+					string_data += '-' + (str(day) if day >= 10 else '0' + str(day))
+
 		return Registre_boia.objects.filter(boia=self) \
-			.filter(timestamp__contains=year) \
+			.filter(timestamp__contains=string_data) \
 			.aggregate(tmp_aigua_maxima=Max('tmp_water'), \
 					   tmp_aigua_minima=Min('tmp_water'), \
+					   tmp_aigua_mitjana=Avg('tmp_water'), \
 					   tmp_aire_maxima=Max('tmp_air'), \
 					   tmp_aire_minima=Min('tmp_air'), \
+					   tmp_aire_mitjana=Avg('tmp_air'), \
 					   wind_speed_maxima=Max('wind_speed'), \
-					   wind_speed_minima=Min('wind_speed')
+					   wind_speed_minima=Min('wind_speed'), \
+					   wind_speed_mitjana=Avg('wind_speed')
 					   )
+
 
 	class Meta:
 		db_table = "boia"

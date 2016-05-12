@@ -1,6 +1,8 @@
 {% extends 'base.html' %}
 {% block sidebar %}
-    <aside id="sidebar"></aside>
+    <aside id="sidebar">
+        <div><a styles="text-align: center" href="/centre/{{ centre.id }}/{{ boia.id }}/">Actual</a></div>
+    </aside>
 {% endblock %}
 {% block content %}
     {% load humanize %}
@@ -103,7 +105,7 @@
                    reg.mes, reg.wind_speed
            ]);
         });
-        google.charts.load('current', {'packages':['corechart']});
+        google.charts.load('current', {'packages':['line']});
         google.charts.setOnLoadCallback(drawChart);
 
         function drawChart() {
@@ -111,65 +113,63 @@
 
             var options_aigua = {
                 title: 'Temperatura de l\'aigua',
-                curveType: 'function',
-                legend: { position: 'bottom' }
+                legend: { position: 'none' },
+                vAxis: { format: 'decimal'}
             };
 
-            var chart = new google.visualization.LineChart(document.getElementById('chart_aigua'));
+            var chart = new google.charts.Line(document.getElementById('chart_aigua'));
 
-            chart.draw(data_aigua, options_aigua);
+            chart.draw(data_aigua, google.charts.Line.convertOptions(options_aigua));
 
             var data_aire = google.visualization.arrayToDataTable(chart_aire_data);
 
             var options_aire = {
                 title: 'Temperatura de l\'aire',
-                curveType: 'function',
-                legend: { position: 'bottom' }
+                legend: { position: 'none' },
+                vAxis: { format: 'decimal'}
             };
 
-            var chart = new google.visualization.LineChart(document.getElementById('chart_aire'));
+            var chart = new google.charts.Line(document.getElementById('chart_aire'));
 
-            chart.draw(data_aire, options_aire);
+            chart.draw(data_aire, google.charts.Line.convertOptions(options_aire));
 
             var data_vent = google.visualization.arrayToDataTable(chart_vent_data);
 
             var options_vent = {
                 title: 'Velocitat del vent',
-                curveType: 'function',
-                legend: { position: 'bottom' }
+                legend: { position: 'none' },
+                vAxis: { format: '#.# Km/h', viewWindow: {max: 40, min: 0}}
             };
 
-            var chart = new google.visualization.LineChart(document.getElementById('chart_vent'));
+            var chart = new google.charts.Line(document.getElementById('chart_vent'));
 
-            chart.draw(data_vent, options_vent);
+            chart.draw(data_vent, google.charts.Line.convertOptions(options_vent));
         }
     </script>
     <script>
+        function mesToString(mes) {
+            mesos = ['','Gener', 'Febrer', 'Març', 'Abril', 'Maig', 'Juny', 'Juliol', 'Agost', 'Setembre', 'Octubre', 'Novembre', 'Desembre'];
+            return mesos[parseInt(mes)];
+        }
+
+        var url = '/centre/{{ centre.id }}/{{ boia.id }}/'
 
         var dates = {{dates|safe}};
 
         $('#sidebar').append('<ul id="menu"></ul>');
 
         for (var any in dates) {
-            var item_any = $('<li></li>').text(any).append('<ul class="mesos"></ul>').attr('id', any);
+            var item_any = $('<li></li>').html('<a href="'+url+any+'/">'+ any +'</a>').append('<ul class="mesos"></ul>').attr('id', any);
             $('#menu').prepend(item_any);
-            //dates_menu.anys.push(any);
-            //dates_menu[any] = {'mesos': []};
             for (var mes in dates[any]) {
-                var item_mes = $('<li></li>').text(mes).append('<ul class="dies"></ul>').attr('id',  any + '-' + mes);
-                $('#menu:first-child .mesos').prepend(item_mes);
-                //dates_menu[any].mesos.push(mes);
-                //dates_menu[any][mes] = {'dies': []};
+                var item_mes = $('<li></li>').html('<a href="'+url+any+'/'+mes+'/">'+ mesToString(mes) +'</a>').append('<ul class="dies"></ul>').attr('id',  any + '-' + mes);
+                $('#'+any+' .mesos:nth-child(2)').prepend(item_mes);
                 for (var dia in dates[any][mes]) {
-                    var item_dia = $('<li></li>').text(dia).attr('id', any +'-'+ mes +'-'+ dia);
-                    $('#menu:first-child .dies').prepend(item_dia);
-                    //dates_menu[any][mes].dies.push(dia);
+                    var item_dia = $('<li></li>').html('<a href="'+url+any+'/'+mes+'/'+dia+'/">'+ dia +'</a>').attr('id', any +'-'+ mes +'-'+ dia);
+                    $('#'+any+'-'+mes+' .dies:nth-child(2)').prepend(item_dia);
                 }
-                //dates_menu[any][mes].dies.reverse();
             }
-            //dates_menu[any].mesos.reverse();
         }
-        //dates_menu.anys.reverse();
 
 
 

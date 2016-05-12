@@ -110,8 +110,9 @@ def boia(request, id_centre, id_boia):
 	except:
 		return redirect('/')
 
-	context = {'sliders': sliders, 'centre': centre, 'boia': boia, 'max_min': max_min, 'latest': latest, 'dates': dates}
+	context = {'sliders': sliders, 'centre': centre, 'boia': boia, 'max_min': max_min, 'latest': latest, 'dates': dates, 'sidebar': True}
 	return render(request, 'boia.html', context)
+
 
 def boia_any(request, id_centre, id_boia, year):
 	sliders = getSliders()
@@ -120,13 +121,38 @@ def boia_any(request, id_centre, id_boia, year):
 	boia = check_boia(request, centre, id_boia)
 	boia.get_registres_anuals(year)
 
+	try:
+		max_min = boia.get_registres_max_min_avg(int(year))
+		dates = boia.get_dates()
+		if not int(year) in dates.keys():
+			return redirect('/')
+		mitjanes = json.dumps(boia.get_registres_anuals(int(year)))
+	except:
+		return redirect('/')
 
-	max_min = boia.get_registres_max_min_year(year)
-	dates = boia.get_dates()
-	mitjanes = boia.get_registres_anuals(year)
-	mitjanes = json.dumps(mitjanes)
+
+	context = {'sliders': sliders, 'centre': centre, 'boia': boia, 'max_min': max_min, 'dates': dates, 'mitjanes': mitjanes, 'year': year, 'sidebar': True}
+
+	return render(request, 'boia_chart.html', context)
 
 
-	context = {'sliders': sliders, 'centre': centre, 'boia': boia, 'max_min': max_min, 'dates': dates, 'mitjanes': mitjanes}
+def boia_mes(request, id_centre, id_boia, year, month):
+	sliders = getSliders()
+
+	centre = check_centre(request, id_centre)
+	boia = check_boia(request, centre, id_boia)
+
+
+	try:
+		max_min = boia.get_registres_max_min_avg(int(year), int(month))
+		dates = boia.get_dates()
+		if not int(year) in dates.keys() or not int(month) in dates[int(year)].keys():
+			return redirect('/')
+		mitjanes = json.dumps(boia.get_registres_mensuals(int(year), int(month)))
+	except:
+		return redirect('/')
+
+
+	context = {'sliders': sliders, 'centre': centre, 'boia': boia, 'max_min': max_min, 'dates': dates, 'mitjanes': mitjanes, 'year': year, 'month': month, 'sidebar': True}
 
 	return render(request, 'boia_chart.html', context)

@@ -39,9 +39,17 @@
             </header>
         </nav>
     </div>
-    {% block sidebar %}{% endblock %}
+
     <main class="container">
-        {% block content %}{% endblock %}
+        <div class="row">
+            {% if sidebar %}
+                <div class="left col s2" id="zindex">{% block sidebar %}{% endblock %}</div>
+                <div class="right col s10">
+            {% else %}
+                <div class="right col s12">
+            {% endif %}
+                {% block content %}{% endblock %}</div>
+        </div>
     </main>
     <footer class="page-footer teal">
         <div class="footer-copyright">
