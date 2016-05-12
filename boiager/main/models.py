@@ -172,7 +172,7 @@ class Boia(models.Model):
 		reg = []
 		for registre in registres:
 			reg.append({
-				'hora': registre['hour'].hour,
+				'hora': registre['hour'],
 				'tmp_aigua': registre['tmp_aigua'],
 				'tmp_aire': registre['tmp_aire'],
 				'wind_speed': registre['wind_speed']

@@ -119,7 +119,6 @@ def boia_any(request, id_centre, id_boia, year):
 
 	centre = check_centre(request, id_centre)
 	boia = check_boia(request, centre, id_boia)
-	boia.get_registres_anuals(year)
 
 	try:
 		max_min = boia.get_registres_max_min_avg(int(year))
@@ -129,7 +128,6 @@ def boia_any(request, id_centre, id_boia, year):
 		mitjanes = json.dumps(boia.get_registres_anuals(int(year)))
 	except:
 		return redirect('/')
-
 
 	context = {'sliders': sliders, 'centre': centre, 'boia': boia, 'max_min': max_min, 'dates': dates, 'mitjanes': mitjanes, 'year': year, 'sidebar': True}
 
@@ -142,7 +140,6 @@ def boia_mes(request, id_centre, id_boia, year, month):
 	centre = check_centre(request, id_centre)
 	boia = check_boia(request, centre, id_boia)
 
-
 	try:
 		max_min = boia.get_registres_max_min_avg(int(year), int(month))
 		dates = boia.get_dates()
@@ -154,5 +151,26 @@ def boia_mes(request, id_centre, id_boia, year, month):
 
 
 	context = {'sliders': sliders, 'centre': centre, 'boia': boia, 'max_min': max_min, 'dates': dates, 'mitjanes': mitjanes, 'year': year, 'month': month, 'sidebar': True}
+
+	return render(request, 'boia_chart.html', context)
+
+
+def boia_dia(request, id_centre, id_boia, year, month, day):
+	sliders = getSliders()
+
+	centre = check_centre(request, id_centre)
+	boia = check_boia(request, centre, id_boia)
+
+	try:
+		max_min = boia.get_registres_max_min_avg(int(year), int(month), int(day))
+		dates = boia.get_dates()
+		if not int(year) in dates.keys() or not int(month) in dates[int(year)].keys() or not int(day) in dates[int(year)][int(month)].keys():
+			return redirect('/')
+		mitjanes = json.dumps(boia.get_registres_diaris(int(year), int(month), int(day)))
+	except:
+		return redirect('/')
+
+
+	context = {'sliders': sliders, 'centre': centre, 'boia': boia, 'max_min': max_min, 'dates': dates, 'mitjanes': mitjanes, 'year': year, 'month': month, 'day': day, 'sidebar': True}
 
 	return render(request, 'boia_chart.html', context)
