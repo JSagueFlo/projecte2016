@@ -1,4 +1,27 @@
 {% extends 'base.html' %}
 {% block content %}
-<h4>Home</h4>
+<div class="section">
+    <div class="slider fullscreen">
+        <ul class="slides">
+          {% for slider in sliders %}
+          <li>
+            <img src="/static/sliders/{{ slider.img }}"> <!-- random image -->
+            <div class="caption left-align">
+              <h3>{{ slider.title }}</h3>
+              <h5 class="light grey-text text-lighten-3">{{ slider.synopsis }}</h5>
+
+              <a  href="{{ slider.href }}" style="margin-top: 100px;" class="btn waves-effect waves-light center">Més informació</a>
+            </div>
+          </li>
+          {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}
+    <script>
+        $(document).ready(function(){
+            $('.slider').slider({full_width: true});
+        });
+    </script>
 {% endblock %}

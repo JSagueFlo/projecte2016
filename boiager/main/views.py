@@ -10,57 +10,81 @@ from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.models import Permission, User
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from .forms import SignupForm
-from .functions import getSliders, getUserCentres, getPublicCentres, check_centre, check_boia, token_validates
-from .models import Centre, Slider, Boia, Token
+from .functions import getUserCentres, getPublicCentres, check_centre, check_boia, token_validates
+from .models import Centre, Boia, Token, Slider
 
 
 #from django.shortcuts import get_object_or_404
+
+
+
+
+###################
+## PÀGINES VIEWS ##
+###################
+
+def pagines(request, label):
+	context = {'label': label}
+	return render(request, 'pagines/'+ label + '.html', context)
+
+def home(request):
+	sliders = Slider.objects.all()
+	context = {'sliders': sliders}
+	return render(request, 'home.html', context)
 
 
 ################
 ## USER VIEWS ##
 ################
 
-def home(request):
-	sliders = getSliders()
-	context = {'sliders': sliders}
-	return render(request, 'home.html', context)
-
-
 def signup(request):
-	sliders = getSliders()
+	if request.user.is_authenticated:
+		messages.add_message(request, messages.WARNING, "Ja estàs autenticat com a " + request.user.username + ".")
+		return redirect('/')
+
 	form = SignupForm(data=request.POST or None)
 	token = ""
 	if request.method == 'POST':
-		token = request.POST["token"]
-		token_obj = Token.objects.get(token=token)
-		centre = token_obj.centre
-		if form.is_valid():
-			new_user = form.save()
-			if new_user is not None:
-				centre.user.add(new_user)
-				token_obj.being_used = 0
-				token_obj.used = 1
-				token_obj.save()
-				new_user = authenticate( username=form.cleaned_data['username'], password=form.cleaned_data['password1'])
-				auth_login(request, new_user)
-				messages.add_message(request, messages.SUCCESS, "Benvingut a Boiager!")
-			return redirect('/')
-	if request.method == 'GET':
-		token = request.GET["token"]
-		if token_validates(token):
+		try:
+			token = request.POST["token"]
 			token_obj = Token.objects.get(token=token)
-			token_obj.being_used = 1
-			token_obj.save()
-		else:
-			messages.add_message(request, messages.ERROR, "El codi que has introduït és invàlid!")
+			if not token_obj.used:
+				centre = token_obj.centre
+				if form.is_valid():
+					new_user = form.save()
+					if new_user is not None:
+						centre.user.add(new_user)
+						token_obj.being_used = 0
+						token_obj.used = 1
+						token_obj.save()
+						if Token.objects.filter(centre=centre, used=0).count() == 0:
+							centre.generate_tokens(10)
+						new_user = authenticate( username=form.cleaned_data['username'], password=form.cleaned_data['password1'])
+						auth_login(request, new_user)
+						messages.add_message(request, messages.SUCCESS, "Benvingut a Boiager!")
+					return redirect('/')
+			else:
+				return redirect('/codi')
+		except:
 			return redirect('/codi')
-	context = {'form': form, 'sliders': sliders, 'token': token}
+	if request.method == 'GET':
+		try:
+			token = request.GET["token"]
+			if token_validates(token):
+				token_obj = Token.objects.get(token=token)
+				token_obj.being_used = 1
+				token_obj.save()
+			else:
+				messages.add_message(request, messages.ERROR, "El codi que has introduït és invàlid!")
+				return redirect('/codi')
+		except:
+			return redirect('/codi')
+
+	context = {'form': form, 'token': token}
 	return render(request, 'signup.html', context)
 
 
 def login(request):
-	sliders = getSliders()
 	form = AuthenticationForm(data=request.POST or None)
 	if request.method == 'POST':
 		username = request.POST['username']
@@ -71,7 +95,7 @@ def login(request):
 			messages.add_message(request, messages.SUCCESS, "Benvingut a Boiager!")
 			return redirect('/')
 
-	context = {'form': form, 'sliders': sliders}
+	context = {'form': form, }
 	return render(request, 'login.html', context)
 
 
@@ -82,9 +106,11 @@ def logout(request):
 
 
 def codi(request):
-	sliders = getSliders()
+	if request.user.is_authenticated:
+		messages.add_message(request, messages.WARNING, "Ja estàs autenticat com a " + request.user.username + ".")
+		return redirect('/')
 
-	context = {'sliders': sliders}
+	context = {}
 	return render(request, 'codi.html', context)
 
 
@@ -93,7 +119,6 @@ def codi(request):
 ##################
 
 def centres(request):
-	sliders = getSliders()
 	centres_privats = None
 	privats = []
 
@@ -103,13 +128,12 @@ def centres(request):
 	centres_publics = getPublicCentres()
 	publics = serializers.serialize('json', centres_publics)
 	
-	context = {'sliders': sliders, 'centres_privats': centres_privats, 'centres_publics': centres_publics, 'privats': privats, 'publics': publics }
+	context = {'centres_privats': centres_privats, 'centres_publics': centres_publics, 'privats': privats, 'publics': publics }
 
 	return render(request, 'centres.html', context)
 
 
 def centre(request, id_centre):
-	sliders = getSliders()
 	# Centre exists?
 	centre = check_centre(request, id_centre)
 	if type(centre) is not Centre:
@@ -118,7 +142,7 @@ def centre(request, id_centre):
 	boies = Boia.objects.filter(centre=centre)
 	data = serializers.serialize('json', boies)
 	map_centre = centre.get_map_coords()
-	context = {'sliders': sliders, 'centre': centre, 'boies': boies, 'data': data, 'map_centre': map_centre}
+	context = {'centre': centre, 'boies': boies, 'data': data, 'map_centre': map_centre}
 	return render(request, 'centre.html', context)
 
 
@@ -127,7 +151,6 @@ def centre(request, id_centre):
 ################
 
 def boia(request, id_centre, id_boia):
-	sliders = getSliders()
 
 	centre = check_centre(request, id_centre)
 	if type(centre) is not Centre:
@@ -152,12 +175,11 @@ def boia(request, id_centre, id_boia):
 		return JsonResponse(ultims_registres, safe=False)
 
 	else:
-		context = {'sliders': sliders, 'centre': centre, 'boia': boia, 'max_min': max_min, 'latest': latest, 'dates': dates, 'min_data': min_data, 'max_data': max_data, 'ultims_registres': ultims_registres, 'sidebar': True}
+		context = {'centre': centre, 'boia': boia, 'max_min': max_min, 'latest': latest, 'dates': dates, 'min_data': min_data, 'max_data': max_data, 'ultims_registres': ultims_registres, 'sidebar': True}
 		return render(request, 'boia.html', context)
 
 
 def boia_any(request, id_centre, id_boia, year):
-	sliders = getSliders()
 
 	centre = check_centre(request, id_centre)
 	if type(centre) is not Centre:
@@ -177,13 +199,12 @@ def boia_any(request, id_centre, id_boia, year):
 	except:
 		return redirect('/')
 
-	context = {'sliders': sliders, 'centre': centre, 'boia': boia, 'max_min': max_min, 'dates': dates, 'min_data': min_data, 'max_data': max_data, 'mitjanes': mitjanes, 'year': year, 'sidebar': True}
+	context = {'centre': centre, 'boia': boia, 'max_min': max_min, 'dates': dates, 'min_data': min_data, 'max_data': max_data, 'mitjanes': mitjanes, 'year': year, 'sidebar': True}
 
 	return render(request, 'boia_chart.html', context)
 
 
 def boia_mes(request, id_centre, id_boia, year, month):
-	sliders = getSliders()
 
 	centre = check_centre(request, id_centre)
 	if type(centre) is not Centre:
@@ -204,13 +225,12 @@ def boia_mes(request, id_centre, id_boia, year, month):
 		return redirect('/')
 
 
-	context = {'sliders': sliders, 'centre': centre, 'boia': boia, 'max_min': max_min, 'dates': dates, 'min_data': min_data, 'max_data': max_data, 'mitjanes': mitjanes, 'year': year, 'month': month, 'sidebar': True}
+	context = {'centre': centre, 'boia': boia, 'max_min': max_min, 'dates': dates, 'min_data': min_data, 'max_data': max_data, 'mitjanes': mitjanes, 'year': year, 'month': month, 'sidebar': True}
 
 	return render(request, 'boia_chart.html', context)
 
 
 def boia_dia(request, id_centre, id_boia, year, month, day):
-	sliders = getSliders()
 
 	centre = check_centre(request, id_centre)
 	if type(centre) is not Centre:
@@ -231,6 +251,6 @@ def boia_dia(request, id_centre, id_boia, year, month, day):
 		return redirect('/')
 
 
-	context = {'sliders': sliders, 'centre': centre, 'boia': boia, 'max_min': max_min, 'dates': dates, 'min_data': min_data, 'max_data': max_data, 'mitjanes': mitjanes, 'year': year, 'month': month, 'day': day, 'sidebar': True}
+	context = {'centre': centre, 'boia': boia, 'max_min': max_min, 'dates': dates, 'min_data': min_data, 'max_data': max_data, 'mitjanes': mitjanes, 'year': year, 'month': month, 'day': day, 'sidebar': True}
 
 	return render(request, 'boia_chart.html', context)

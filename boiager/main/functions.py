@@ -1,9 +1,8 @@
-from .models import Slider, Centre, Boia, Registre_boia, Token
+from .models import Centre, Boia, Registre_boia, Token
 from django.shortcuts import render_to_response, redirect, render
 from django.contrib import messages
 
-def getSliders():
-	return Slider.objects.all()
+
 
 def getUserCentres(request):
 	if str(request.user) != 'AnonymousUser':

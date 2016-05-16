@@ -19,6 +19,10 @@ main {
     flex: 1 0 auto;
 }
 
+.slider img {
+	-webkit-filter: blur(1px) brightness(60%);
+}
+
 #logo {
 	font-size: 18px;
 	font-weight: 600;

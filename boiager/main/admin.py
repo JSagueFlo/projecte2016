@@ -17,7 +17,7 @@ class TokenAdmin(admin.ModelAdmin):
 	list_display = ('token', 'centre')
 
 class SliderAdmin(admin.ModelAdmin):
-	list_display = ('label', 'title')
+	list_display = ('title',)
 
 admin.site.register(Centre, CentreAdmin)
 admin.site.register(Boia, BoiaAdmin)

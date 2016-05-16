@@ -273,13 +273,11 @@ class Token(models.Model):
 	class Meta:
 		db_table = "token"
 
-
 class Slider(models.Model):
 	title = models.CharField(max_length=100, default='Title')
 	img = models.CharField(max_length=100, null=True, blank=True)
-	label = models.CharField(max_length=30, unique=True, default='Label')
 	synopsis = models.CharField(max_length=1000, null=True, blank=True)
-	filename = models.CharField(max_length=100, unique=True, default='index.html')
+	href = models.CharField(max_length=100, unique=True, default='/')
 
 	def __unicode__(self):
 		return u''+self.title
