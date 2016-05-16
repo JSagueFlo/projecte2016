@@ -6,6 +6,7 @@ body {
     font-weight: 300
 }
 
+
 a {
 	color: #009688;
 }
@@ -19,12 +20,27 @@ main {
 }
 
 #logo {
+	font-size: 18px;
+	font-weight: 600;
 	margin-left: 20px;
 	margin-right: 60px;
 }
 
 nav .brand-logo {
 	position: relative;
+}
+
+.divider_centres {
+	margin-bottom: 15px;
+}
+
+.small {
+	font-size: 10px;
+}
+
+.taula_centres p {
+	margin-bottom: 2px;
+	margin-top: 2px;
 }
 
 .errorlist {
@@ -50,6 +66,18 @@ nav .brand-logo {
 	height: 500px;
 }
 
+#map.map_centres {
+	height: 600px;
+}
+
+#map.map_boia_actual {
+	height: 350px;
+}
+
+#map.map_boia_history {
+	height: 200px;
+}
+
 img {
 	width: 100%;
 	height: auto;
@@ -67,6 +95,8 @@ img {
 
 .statscard-title {
 	text-align: left;
+	letter-spacing: 5px;
+	text-transform: uppercase;
 }
 
 .statscard-title > i {
@@ -95,6 +125,7 @@ img {
 	font-weight: 200;
 	margin-top: 0;
 	margin-bottom: 0;
+	color: #009688;
 }
 
 .statscard-stat_actual {
@@ -102,6 +133,7 @@ img {
 	font-weight: 300;
 	margin-top: 0;
 	margin-bottom: 0.5em;
+	color: #009688;
 }
 
 .statscard-unit {
@@ -114,7 +146,7 @@ img {
 
 
 .message {
-	color: #888;
+	color: white;
 	font-size: 14px;
 }
 
@@ -170,11 +202,17 @@ img {
 	text-align: center;
 	box-sizing: border-box;
 	position: relative;
-	background-color: #e0f2f1;
+	background-color: #f2fafa;
+}
+
+#menu  ul > li > ul {
+	max-height: 288px;
+	overflow-y: auto;
+	overflow-x: hidden;
 }
 
 #menu li {
-	margin-bottom: 2px;
+	line-height: 22px;
 	border-bottom: 1px solid #009688;
 	height: 22px;
 	width: 50px;
@@ -214,6 +252,30 @@ img {
 	display: block;
 	left: 100px;
 	top: 0px;
+}
+
+
+/* SCROLLBAR */
+
+::-webkit-scrollbar {
+    width: 5px;
+}
+::-webkit-scrollbar-track {
+    background-color: #e0f2f1;
+}
+::-webkit-scrollbar-thumb {
+    background-color: #009688;
+}
+::-webkit-scrollbar-thumb:hover {
+    background-color: #aaa;
+}
+
+
+#calendar {
+	position: relative;
+	top: 4px;
+	color: #009688;
+	cursor: pointer;
 }
 
 

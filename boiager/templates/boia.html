@@ -1,81 +1,77 @@
 {% extends 'base.html' %}
 {% block sidebar %}
-    <aside id="sidebar"></aside>
+    <aside id="sidebar">
+        <div><a style="text-align: center" href="/centre/{{ centre.id }}/{{ boia.id }}/">Actual</a></div>
+    </aside>
 {% endblock %}
 {% block content %}
     {% load humanize %}
-    <div class="section">
+    <div class="section" id="breadcrumbs">
         <a href="/centres">Centres</a> &#8594 <a href="/centre/{{ centre.id }}">{{ centre.name }}</a> &#8594 <b>{{ boia.location_name }}</b>
     </div>
     <div class="divider"></div>
     <div class="section">
-        <h5>{{ boia.location_name }}</h5> {{ latest.timestamp|naturaltime }}
-        <div class="row">
+
+
+
+
+
             {% comment %}<div class="col s4">
             {% if boia.location_img %}
                 <div class="section"><img src="{{boia.location_img}}" alt=""></div>
             {% endif %}
             </div>{% endcomment %}
-            <div class="col s6">
+            <div class="col s7">
+                <h5>{{ boia.location_name }} <i class="material-icons" id="calendar">date_range</i></h5> {{ latest.timestamp|naturaltime }}
                 <div class="row">
-                    <div class="col s6 statscard">
-                        <h6 class="statscard-title"><i class="wi wi-raindrop"></i> Temp aigua</h6>
-                        <div class="divider"></div>
-
+                    <h6 class="statscard-title"><i class="wi wi-raindrop"></i> Temperatura de l'aigua</h6>
+                    <div class="divider"></div>
+                    <div class="col s4 statscard">
                         <p class="statscard-label_actual">Ara</p>
-                        <p class="statscard-stat_actual">{{ latest.tmp_water|floatformat:1 }} <i class="wi wi-celsius"></i></p>
+                        <p class="statscard-stat_actual"><span id="tmp_water_now">{{ latest.tmp_water|floatformat:1 }}</span> <i class="wi wi-celsius"></i></p>
 
                         <p class="statscard-label">Màxima</p>
-                        <p class="statscard-stat">{{ max_min.tmp_aigua_maxima|floatformat:1 }} <i class="wi wi-celsius"></i></p>
+                        <p class="statscard-stat"><span id="tmp_water_max">{{ max_min.tmp_aigua_maxima|floatformat:1 }}</span> <i class="wi wi-celsius"></i></p>
 
                         <p class="statscard-label">Mínima</p>
-                        <p class="statscard-stat">{{ max_min.tmp_aigua_minima|floatformat:1 }} <i class="wi wi-celsius"></i></p>
+                        <p class="statscard-stat"><span id="tmp_water_min">{{ max_min.tmp_aigua_minima|floatformat:1 }}</span> <i class="wi wi-celsius"></i></p>
                     </div>
-                    <div class="col s6 statscard">
-                        <h6 class="statscard-title"><i class="wi wi-thermometer-exterior"></i> Temp aire</h6>
-                        <div class="divider"></div>
-
-                        <p class="statscard-label_actual">Ara</p>
-                        <p class="statscard-stat_actual">{{ latest.tmp_air|floatformat:1 }} <i class="wi wi-celsius"></i></p>
-
-                        <p class="statscard-label">Màxima</p>
-                        <p class="statscard-stat">{{ max_min.tmp_aire_maxima|floatformat:1 }} <i class="wi wi-celsius"></i></p>
-
-                        <p class="statscard-label">Mínima</p>
-                        <p class="statscard-stat">{{ max_min.tmp_aire_minima|floatformat:1 }} <i class="wi wi-celsius"></i></p>
-                    </div>
+                    <div class="col s8"><div id="chart_aigua" style="width: 100%; height: 225px; margin-top: 35px; margin-bottom: 70px"></div></div>
                 </div>
                 <div class="row">
-                    <div class="col s6 statscard">
-                        <h6 class="statscard-title"><i class="wi wi-strong-wind"></i> Vent</h6>
-                        <div class="divider"></div>
-
+                    <h6 class="statscard-title"><i class="wi wi-thermometer-exterior"></i> Temperatura de l'aire</h6>
+                    <div class="divider"></div>
+                    <div class="col s4 statscard">
                         <p class="statscard-label_actual">Ara</p>
-                        <p class="statscard-stat_actual">{{ latest.wind_speed|floatformat:1 }} <span class="statscard-unit_actual">Km/h</span></p>
+                        <p class="statscard-stat_actual"><span id="tmp_air_now">{{ latest.tmp_air|floatformat:1 }}</span> <i class="wi wi-celsius"></i></p>
 
                         <p class="statscard-label">Màxima</p>
-                        <p class="statscard-stat">{{ max_min.wind_speed_maxima|floatformat:1 }} <span class="statscard-unit">Km/h</span></p>
+                        <p class="statscard-stat"><span id="tmp_air_max">{{ max_min.tmp_aire_maxima|floatformat:1 }}</span> <i class="wi wi-celsius"></i></p>
 
                         <p class="statscard-label">Mínima</p>
-                        <p class="statscard-stat">{{ max_min.wind_speed_minima|floatformat:1 }} <span class="statscard-unit">Km/h</span></p>
+                        <p class="statscard-stat"><span id="tmp_air_min">{{ max_min.tmp_aire_minima|floatformat:1 }}</span> <i class="wi wi-celsius"></i></p>
                     </div>
-                    <div class="col s6 statscard">
-                        <h6 class="statscard-title"><i class="wi wi-thermometer-exterior"></i> Temp aire</h6>
-                        <div class="divider"></div>
+                    <div class="col s8"><div id="chart_aire" style="width: 100%; height: 225px; margin-top: 35px; margin-bottom: 70px"></div></div>
+                </div>
+                <div class="row">
+                    <h6 class="statscard-title"><i class="wi wi-strong-wind"></i> Vent</h6>
+                    <div class="divider"></div>
+                    <div class="col s4 statscard">
 
                         <p class="statscard-label_actual">Ara</p>
-                        <p class="statscard-stat_actual">{{ latest.tmp_air|floatformat:1 }} <i class="wi wi-celsius"></i></p>
+                        <p class="statscard-stat_actual"><span id="wind_speed_now">{{ latest.wind_speed|floatformat:1 }}</span> <span class="statscard-unit_actual">Km/h</span></p>
 
                         <p class="statscard-label">Màxima</p>
-                        <p class="statscard-stat">{{ max_min.tmp_aire_maxima|floatformat:1 }} <i class="wi wi-celsius"></i></p>
+                        <p class="statscard-stat"><span id="wind_speed_max">{{ max_min.wind_speed_maxima|floatformat:1 }}</span> <span class="statscard-unit">Km/h</span></p>
 
                         <p class="statscard-label">Mínima</p>
-                        <p class="statscard-stat">{{ max_min.tmp_aire_minima|floatformat:1 }} <i class="wi wi-celsius"></i></p>
+                        <p class="statscard-stat"><span id="wind_speed_min">{{ max_min.wind_speed_minima|floatformat:1 }}</span> <span class="statscard-unit">Km/h</span></p>
                     </div>
+                    <div class="col s8"><div id="chart_vent" style="width: 100%; height: 225px; margin-top: 35px; margin-bottom: 70px"></div></div>
                 </div>
             </div>
-            <div class="col s5 offset-s1">
-                <div id="map"></div>
+            <div class="col s4 offset-s1">
+                <div id="map" class="map_boia_actual"></div>
             </div>
         </div>
     </div>
@@ -83,31 +79,26 @@
 
 {% block scripts %}
     <script>
+        // MAP
+        var lat = {{boia.lat|floatformat:7}};
+        var lng = {{boia.lng|floatformat:7}};
 
+        // MENU
+        var url = '/centre/{{ centre.id }}/{{ boia.id }}/';
+        var dates = {{dates|safe}};
 
+        // STATS
+        var min_data = new Date("{{ min_data.isoformat }}");
+        var max_data = new Date("{{ max_data.isoformat }}");
 
-
-
-        var map;
-        function initMap() {
-            map = new google.maps.Map(document.getElementById('map'), {
-                center: {lat: {{boia.lat|floatformat:7}}, lng:{{boia.lng|floatformat:7}} },
-                zoom: 17,
-                scrollwheel: false,
-                disableDefaultUI: true,
-                draggable: false,
-                styles:[{"featureType":"landscape.natural","elementType":"geometry.fill","stylers":[{"visibility":"on"},{"color":"#e0efef"}]},{"featureType":"poi","elementType":"geometry.fill","stylers":[{"visibility":"on"},{"hue":"#1900ff"},{"color":"#c0e8e8"}]},{"featureType":"road","elementType":"geometry","stylers":[{"lightness":100},{"visibility":"simplified"}]},{"featureType":"road","elementType":"labels","stylers":[{"visibility":"off"}]},{"featureType":"transit.line","elementType":"geometry","stylers":[{"visibility":"on"},{"lightness":700}]},{"featureType":"water","elementType":"all","stylers":[{"color":"#80cbc4"}]}]
-            });
-
-            var marker = new google.maps.Marker({
-                position: { lat: parseFloat({{ boia.lat }}), lng: parseFloat({{ boia.lng }})},
-                map: map,
-                title: '{{ boia.location_name }}',
-                icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png'
-            });
-        }
-
+        // CHART
+        var ultims_registres = {{ ultims_registres|safe }};
     </script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="/static/js/menu.js"></script>
+    <script type="text/javascript" src="/static/js/calendar.js"></script>
+    <script type="text/javascript" src="/static/js/boia_map.js"></script>
+    <script type="text/javascript" src="/static/js/boia_live_charts.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCxxnEczYMOs4eAAM-RMTvFPzK5xxLn_NE&callback=initMap"
         async defer></script>
 {% endblock %}

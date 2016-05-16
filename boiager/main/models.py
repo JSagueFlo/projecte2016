@@ -5,15 +5,16 @@ from django.utils.timezone import localtime, now
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
 from datetime import datetime, date, timedelta as td
+from uuid import uuid4
 import calendar
 import locale
 
 locale.setlocale(locale.LC_ALL, 'ca_ES')
 
 
-@receiver(pre_save)
-def my_callback(sender, instance, *args, **kwargs):
-    instance.timestamp = now()
+# @receiver(pre_save)
+# def my_callback(sender, instance, *args, **kwargs):
+#   instance.timestamp = now()
 
 
 # Create your models here.
@@ -50,6 +51,12 @@ class Centre(models.Model):
 			lng = self.lng
 		map_centre = {'lat': lat, 'lng': lng}
 		return map_centre
+
+	def generate_tokens(self, num):
+		for i in range(num):
+			token = str(uuid4())
+			token_obj = Token(centre=self, token=token)
+			token_obj.save()
 
 	class Meta:
 		db_table = "centre"
@@ -97,9 +104,14 @@ class Boia(models.Model):
 		arrayDies.sort(reverse=True)
 		return arrayDies
 
-	def get_dates(self):
+	def get_dates_min_max(self):
 		d1 = Registre_boia.objects.first().timestamp.date()
 		d2 = Registre_boia.objects.last().timestamp.date()
+		return [d1,d2]
+
+	def get_dates(self):
+		d1 = Registre_boia.objects.filter(boia=self).first().timestamp.date()
+		d2 = Registre_boia.objects.filter(boia=self).last().timestamp.date()
 		delta = d2 - d1
 		dates = {}
 
@@ -119,6 +131,11 @@ class Boia(models.Model):
 	def get_registre_actual(self):
 		return Registre_boia.objects.filter(boia=self).last()
 
+
+	def get_latest_registres(self):
+		ultims = Registre_boia.objects.filter(boia=self).order_by('-id')[:10]
+		return reversed(ultims)
+
 	def get_registres_anuals(self, year):
 		month = connection.ops.date_trunc_sql('month', 'timestamp')
 		registres_year = Registre_boia.objects.filter(boia=self).filter(timestamp__contains=year)
@@ -130,7 +147,7 @@ class Boia(models.Model):
 		reg = []
 		for registre in registres:
 			reg.append({
-				'mes': calendar.month_name[registre['month'].month],
+				'mes': calendar.month_abbr[registre['month'].month],
 				'tmp_aigua': registre['tmp_aigua'],
 				'tmp_aire': registre['tmp_aire'],
 				'wind_speed': registre['wind_speed']
@@ -203,16 +220,16 @@ class Boia(models.Model):
 				if day is not None:
 					string_data += '-' + (str(day) if day >= 10 else '0' + str(day))
 
-		return Registre_boia.objects.filter(boia=self) \
+		return Registre_boia.objects.filter(boia=self)\
 			.filter(timestamp__contains=string_data) \
-			.aggregate(tmp_aigua_maxima=Max('tmp_water'), \
-					   tmp_aigua_minima=Min('tmp_water'), \
-					   tmp_aigua_mitjana=Avg('tmp_water'), \
-					   tmp_aire_maxima=Max('tmp_air'), \
-					   tmp_aire_minima=Min('tmp_air'), \
-					   tmp_aire_mitjana=Avg('tmp_air'), \
-					   wind_speed_maxima=Max('wind_speed'), \
-					   wind_speed_minima=Min('wind_speed'), \
+			.aggregate(tmp_aigua_maxima=Max('tmp_water'),\
+					   tmp_aigua_minima=Min('tmp_water'),\
+					   tmp_aigua_mitjana=Avg('tmp_water'),\
+					   tmp_aire_maxima=Max('tmp_air'),\
+					   tmp_aire_minima=Min('tmp_air'),\
+					   tmp_aire_mitjana=Avg('tmp_air'),\
+					   wind_speed_maxima=Max('wind_speed'),\
+					   wind_speed_minima=Min('wind_speed'),\
 					   wind_speed_mitjana=Avg('wind_speed')
 					   )
 
@@ -226,7 +243,7 @@ class Registre_boia(models.Model):
 	#
 	# Important canviar auto_now en mode de produccio
 	#
-	timestamp = models.DateTimeField(auto_now=False)
+	timestamp = models.DateTimeField()
 	tmp_air = models.DecimalField(max_digits=6, decimal_places=3, default=0.0)
 	tmp_water = models.DecimalField(max_digits=6, decimal_places=3, default=0.0)
 	wind_speed = models.DecimalField(max_digits=6, decimal_places=3, default=0.0)

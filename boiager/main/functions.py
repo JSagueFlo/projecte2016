@@ -1,4 +1,4 @@
-from .models import Slider, Centre, Boia, Registre_boia
+from .models import Slider, Centre, Boia, Registre_boia, Token
 from django.shortcuts import render_to_response, redirect, render
 from django.contrib import messages
 
@@ -33,7 +33,14 @@ def check_centre(request, id_centre):
 def check_boia(request, centre, id_boia):
 	try:
 		boia = Boia.objects.get(pk=int(id_boia), centre=centre)
+		return boia
 	except:
 		messages.add_message(request, messages.WARNING, "La boia a la que intentes accedir no existeix!")
 		return redirect('/centre/' + str(centre.id) + '/')
-	return boia
+
+def token_validates(token):
+	try:
+		Token.objects.get(token=token, used=0, being_used=0)
+		return True
+	except:
+		return False

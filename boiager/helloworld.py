@@ -4,6 +4,7 @@
 '''
 from main.models import Boia, Registre_boia, Centre
 import random
+import time
 from datetime import datetime, date, timedelta
 '''
 	FI IMPORTS
@@ -13,8 +14,8 @@ from datetime import datetime, date, timedelta
 	DEFINEIX ELS PARÀMETERS AQUÍ
 '''
 id_boia = 6
-data_inici = datetime(2015, 5, 8)
-data_final = datetime(2016, 5, 9)
+data_inici = datetime(2015, 12, 31)
+data_final = datetime(2017, 1, 1)
 '''
 	FI DEFINICIÓ DELS PARÀMETRES
 '''
@@ -29,7 +30,7 @@ print('Creant registres des de ' + str(data_inici) + ' fins ' + str(data_final))
 boia = Boia.objects.get( id=id_boia )
 
 current_datetime = data_inici
-increment = 100 #segons
+increment = 3600 #segons
 segonsTotals = (data_final - data_inici).days * ( 60 * 60 * 24)
 print(str(segonsTotals))
 
@@ -41,6 +42,6 @@ for i in range(0, segonsTotals+1, increment):
 	nou_registre = Registre_boia(boia=boia, timestamp=timestamp, tmp_air=tmpAir, tmp_water=tmpWater, wind_speed=windSpeed)
 	nou_registre.save()
 	current_datetime = current_datetime + timedelta(seconds=increment) # days, seconds, then other fields.
-	print ( 'Added: ' + str(current_datetime.time()) )
+	print ( 'Added: ' + str(current_datetime.time()) + str(current_datetime.date()))
 
 print('end')

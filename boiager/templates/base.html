@@ -32,7 +32,7 @@
                         <li><a href="/profile_edit">Profile Edit</a></li>
                     </ul>
                 {% else %}
-                    <li><a class="btn waves-effect waves-light teal lighten-3" href="/signup">Signup</a></li>
+                    <li><a class="btn waves-effect waves-light teal lighten-3" href="/codi">Signup</a></li>
                     <li><a class="btn waves-effect waves-light teal lighten-3" href="/login">Login</a></li>
                 {% endif %}
                 </ul>
@@ -43,8 +43,8 @@
     <main class="container">
         <div class="row">
             {% if sidebar %}
-                <div class="left col s2" id="zindex">{% block sidebar %}{% endblock %}</div>
-                <div class="right col s10">
+                <div class="left col s1" id="zindex">{% block sidebar %}{% endblock %}</div>
+                <div class="right col s11">
             {% else %}
                 <div class="right col s12">
             {% endif %}
