@@ -8,10 +8,11 @@ from django.contrib.auth import authenticate
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.models import Permission, User
-from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
-from .forms import SignupForm
+from django.contrib.auth.forms import AuthenticationForm
+from .forms import SignupForm, PwdChangeForm
 from .functions import getUserCentres, getPublicCentres, check_centre, check_boia, token_validates
 from .models import Centre, Boia, Token, Slider
+from hashlib import sha1
 
 
 #from django.shortcuts import get_object_or_404
@@ -100,7 +101,25 @@ def login(request):
 
 
 def change_password(request):
-	return
+	if request.user.is_authenticated:
+		form = PwdChangeForm(user=request.user,data=request.POST or None)
+		if request.method == 'POST':
+			old_password = request.POST['old_password']
+			user = request.user
+			if user.check_password(old_password):
+				new_password1 = request.POST['new_password1']
+				new_password2 = request.POST['new_password2']
+				if new_password1 == new_password2:
+					user.set_password(new_password1)
+					user.save()
+					user = authenticate(username=user.username, password=new_password1)
+					auth_login(request, user)
+					messages.add_message(request, messages.SUCCESS, "Contrasenya canviada amb èxit!")
+					return redirect('/')
+		context = {'form': form}
+		return render(request, 'change_password.html', context)
+	else:
+		return redirect('/')
 
 
 def logout(request):
