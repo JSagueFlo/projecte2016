@@ -4,17 +4,16 @@ from django.db.models import Max, Min, Avg
 from django.utils.timezone import localtime, now
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
+from django.core.mail import EmailMessage
 from datetime import datetime, date, timedelta as td
 from uuid import uuid4
 import calendar
 import locale
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 locale.setlocale(locale.LC_ALL, 'ca_ES')
 
-
-# @receiver(pre_save)
-# def my_callback(sender, instance, *args, **kwargs):
-#   instance.timestamp = now()
 
 
 # Create your models here.
@@ -25,8 +24,10 @@ class Centre(models.Model):
 	is_public = models.BooleanField(default=False)
 	lat = models.DecimalField(max_digits=10, decimal_places=7, default=None)
 	lng = models.DecimalField(max_digits=10, decimal_places=7, default=None)
-	img = models.CharField(max_length=100, blank=True, null=True)
+	img = models.CharField(max_length=1000, blank=True, null=True)
 	user = models.ManyToManyField(User, blank=True, null=True)
+	email = models.EmailField(max_length=100, default='example@example.com')
+	site = models.URLField(max_length=200, default='http://www.boiager.cat')
 
 	def __unicode__(self):
 		return u'%s' % self.name
@@ -53,13 +54,26 @@ class Centre(models.Model):
 		return map_centre
 
 	def generate_tokens(self, num):
+		email_body = 'Nous codis d\'accés generats' + self.name + '\n\n'
 		for i in range(num):
 			token = str(uuid4())
+			email_body += '\n' + token
 			token_obj = Token(centre=self, token=token)
 			token_obj.save()
+		try:
+			email = EmailMessage('Nous codis d\'accés generats', email_body, to=[self.email])
+			email.send()
+		except:
+			pass
 
 	class Meta:
 		db_table = "centre"
+
+
+
+@receiver(post_save, sender=Centre)
+def after_Centre_save(sender, instance, **kwargs):
+     instance.generate_tokens(10)
 
 
 class Boia(models.Model):
@@ -278,6 +292,7 @@ class Slider(models.Model):
 	img = models.CharField(max_length=100, null=True, blank=True)
 	synopsis = models.CharField(max_length=1000, null=True, blank=True)
 	href = models.CharField(max_length=100, unique=True, default='/')
+	btn = models.CharField(max_length=100, default='Més informació')
 
 	def __unicode__(self):
 		return u''+self.title

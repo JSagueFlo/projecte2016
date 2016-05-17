@@ -23,6 +23,18 @@ main {
 	-webkit-filter: blur(1px) brightness(60%);
 }
 
+.slider h3, .slider h5 {
+	color: #f2fafa !important;
+}
+
+.indicator-item {
+	background-color: #f2fafa !important;
+}
+
+.indicator-item.active {
+	background-color: #009688 !important;
+}
+
 #logo {
 	font-size: 18px;
 	font-weight: 600;
@@ -58,7 +70,12 @@ nav .brand-logo {
 }
 
 #user-dropdown {
+	margin-top: 70px;
 	/*width: 200px;*/
+}
+
+#user-dropdown > li:hover {
+	background-color: rgba(242,250,250,0.1);
 }
 
 #user-dropdown > li > a {

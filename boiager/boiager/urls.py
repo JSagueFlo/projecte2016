@@ -25,6 +25,7 @@ urlpatterns = [
     url(r'^logout/$', logout),
     url(r'^signup/$', signup),
     url(r'^codi/$', codi),
+    url(r'^change_password/$', change_password),
 
     url(r'^pagines/(.+)/$', pagines),
     #url('^', include('django.contrib.auth.urls')),

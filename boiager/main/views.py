@@ -99,6 +99,10 @@ def login(request):
 	return render(request, 'login.html', context)
 
 
+def change_password(request):
+	return
+
+
 def logout(request):
 	auth_logout(request)
 	messages.add_message(request, messages.WARNING, "Adeu!")
@@ -106,9 +110,23 @@ def logout(request):
 
 
 def codi(request):
-	if request.user.is_authenticated:
-		messages.add_message(request, messages.WARNING, "Ja estàs autenticat com a " + request.user.username + ".")
-		return redirect('/')
+	if request.method == 'GET':
+		if 'token' in request.GET.keys():
+			try:
+				token = request.GET["token"]
+				if token_validates(token):
+					token_obj = Token.objects.get(token=token)
+					token_obj.used = 1
+					token_obj.save()
+					centre = Centre.objects.get(token=token_obj)
+					centre.user.add(request.user)
+					messages.add_message(request, messages.SUCCESS, centre.name + ' vinculat al teu compte amb èxit!')
+					return redirect('/centres')
+				else:
+					messages.add_message(request, messages.ERROR, "El codi que has introduït és invàlid!")
+					return redirect('/codi')
+			except:
+				return redirect('/codi')
 
 	context = {}
 	return render(request, 'codi.html', context)

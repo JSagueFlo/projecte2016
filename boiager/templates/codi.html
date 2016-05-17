@@ -3,16 +3,27 @@
 <div class="section">
 	<div class="row">
 		<div class="col s8 offset-s2">
-			<h4>Codi</h4>
+            {% if user.is_authenticated %}
+            <h4>Afegir un centre</h4>
+			<div class="divider"></div>
+			<form method="GET" class="form">
+				<p>
+                    <label for="token">Codi:</label>
+                    <input autofocus="" id="token" maxlength="36" name="token" type="text" required />
+                </p>
+				<button class="btn waves-effect waves-light right" type="submit">Afegeix</button>
+			</form>
+            {% else %}
+			<h4>Pas 1: Entra el codi del teu centre</h4>
 			<div class="divider"></div>
 			<form method="GET" action='/signup' class="form">
-
 				<p>
                     <label for="token">Codi:</label>
                     <input autofocus="" id="token" maxlength="36" name="token" type="text" required />
                 </p>
 				<button class="btn waves-effect waves-light right" type="submit">Continua</button>
 			</form>
+            {% endif %}
 		</div>
 	</div>
 </div>
