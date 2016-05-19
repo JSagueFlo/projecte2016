@@ -10,7 +10,7 @@ from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.models import Permission, User
 from django.contrib.auth.forms import AuthenticationForm
 from .forms import SignupForm, PwdChangeForm
-from .functions import getUserCentres, getPublicCentres, check_centre, check_boia, token_validates
+from .functions import getUserCentres, getPublicCentres, check_centre, check_boia, token_validates, check_expired_tokens
 from .models import Centre, Boia, Token, Slider
 from hashlib import sha1
 
@@ -25,10 +25,14 @@ from hashlib import sha1
 ###################
 
 def pagines(request, label):
+	if request.user.is_authenticated:
+		check_expired_tokens(request.user)
 	context = {'label': label}
 	return render(request, 'pagines/'+ label + '.html', context)
 
 def home(request):
+	if request.user.is_authenticated:
+		check_expired_tokens(request.user)
 	sliders = Slider.objects.all()
 	context = {'sliders': sliders}
 	return render(request, 'home.html', context)
@@ -55,9 +59,7 @@ def signup(request):
 					new_user = form.save()
 					if new_user is not None:
 						centre.user.add(new_user)
-						token_obj.being_used = 0
-						token_obj.used = 1
-						token_obj.save()
+						token_obj.use(new_user)
 						if Token.objects.filter(centre=centre, used=0).count() == 0:
 							centre.generate_tokens(10)
 						new_user = authenticate( username=form.cleaned_data['username'], password=form.cleaned_data['password1'])
@@ -86,6 +88,9 @@ def signup(request):
 
 
 def login(request):
+	if request.user.is_authenticated:
+		messages.add_message(request, messages.WARNING, "Ja estàs autenticat com a " + request.user.username + ".")
+		return redirect('/')
 	form = AuthenticationForm(data=request.POST or None)
 	if request.method == 'POST':
 		username = request.POST['username']
@@ -102,6 +107,7 @@ def login(request):
 
 def change_password(request):
 	if request.user.is_authenticated:
+		check_expired_tokens(request.user)
 		form = PwdChangeForm(user=request.user,data=request.POST or None)
 		if request.method == 'POST':
 			old_password = request.POST['old_password']
@@ -129,14 +135,15 @@ def logout(request):
 
 
 def codi(request):
+	if request.user.is_authenticated:
+		check_expired_tokens(request.user)
 	if request.method == 'GET':
 		if 'token' in request.GET.keys():
 			try:
 				token = request.GET["token"]
 				if token_validates(token):
 					token_obj = Token.objects.get(token=token)
-					token_obj.used = 1
-					token_obj.save()
+					token_obj.use(request.user)
 					centre = Centre.objects.get(token=token_obj)
 					centre.user.add(request.user)
 					messages.add_message(request, messages.SUCCESS, centre.name + ' vinculat al teu compte amb èxit!')
@@ -151,6 +158,11 @@ def codi(request):
 	return render(request, 'codi.html', context)
 
 
+def dashboard(request):
+	context = {}
+	return render(request, 'dashboard.html', context)
+
+
 ##################
 ## CENTRE VIEWS ##
 ##################
@@ -160,6 +172,7 @@ def centres(request):
 	privats = []
 
 	if request.user.is_authenticated:
+		check_expired_tokens(request.user)
 		centres_privats = getUserCentres(request)
 		privats = serializers.serialize('json', centres_privats)
 	centres_publics = getPublicCentres()
@@ -171,6 +184,8 @@ def centres(request):
 
 
 def centre(request, id_centre):
+	if request.user.is_authenticated:
+		check_expired_tokens(request.user)
 	# Centre exists?
 	centre = check_centre(request, id_centre)
 	if type(centre) is not Centre:
@@ -188,6 +203,8 @@ def centre(request, id_centre):
 ################
 
 def boia(request, id_centre, id_boia):
+	if request.user.is_authenticated:
+		check_expired_tokens(request.user)
 
 	centre = check_centre(request, id_centre)
 	if type(centre) is not Centre:
@@ -217,6 +234,8 @@ def boia(request, id_centre, id_boia):
 
 
 def boia_any(request, id_centre, id_boia, year):
+	if request.user.is_authenticated:
+		check_expired_tokens(request.user)
 
 	centre = check_centre(request, id_centre)
 	if type(centre) is not Centre:
@@ -242,6 +261,8 @@ def boia_any(request, id_centre, id_boia, year):
 
 
 def boia_mes(request, id_centre, id_boia, year, month):
+	if request.user.is_authenticated:
+		check_expired_tokens(request.user)
 
 	centre = check_centre(request, id_centre)
 	if type(centre) is not Centre:
@@ -268,6 +289,8 @@ def boia_mes(request, id_centre, id_boia, year, month):
 
 
 def boia_dia(request, id_centre, id_boia, year, month, day):
+	if request.user.is_authenticated:
+		check_expired_tokens(request.user)
 
 	centre = check_centre(request, id_centre)
 	if type(centre) is not Centre:

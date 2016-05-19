@@ -13,7 +13,7 @@ from datetime import datetime
 '''
 	DEFINEIX ELS PARÀMETERS AQUÍ
 '''
-id_boia = 6
+id_boia = 1
 '''
 	FI DEFINICIÓ DELS PARÀMETRES
 '''

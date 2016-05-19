@@ -19,6 +19,36 @@ main {
     flex: 1 0 auto;
 }
 
+/* TABS */
+
+ul.tabs {
+	flex-direction: column;
+	height: 100%;
+	float: left;
+	width: 20%;
+	text-align: left;
+}
+
+ul.tabs a {
+	color: #009688 !important;
+	text-align: left;
+	padding-left: 15px;
+	background-color: #f2fafa;
+}
+
+ul.tabs li {
+	margin-bottom: 5px !important;
+}
+
+ul.tabs .indicator {
+	display: none;
+}
+
+ul.tabs a.active {
+	font-weight: 400;
+	border-left: 2px solid #009688;
+}
+
 .slider img {
 	-webkit-filter: blur(1px) brightness(60%);
 }

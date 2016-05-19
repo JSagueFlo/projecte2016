@@ -6,6 +6,7 @@ from django.db.models.signals import pre_save
 from django.dispatch import receiver
 from django.core.mail import EmailMessage
 from datetime import datetime, date, timedelta as td
+from dateutil.relativedelta import relativedelta
 from uuid import uuid4
 import calendar
 import locale
@@ -25,15 +26,15 @@ class Centre(models.Model):
 	lat = models.DecimalField(max_digits=10, decimal_places=7, default=None)
 	lng = models.DecimalField(max_digits=10, decimal_places=7, default=None)
 	img = models.CharField(max_length=1000, blank=True, null=True)
-	user = models.ManyToManyField(User, blank=True, null=True)
-	email = models.EmailField(max_length=100, default='example@example.com')
+	user = models.ManyToManyField(User, blank=True, null=True, default=None)
+	email = models.EmailField(max_length=100, default='jordi.martyn1@gmail.com')
 	site = models.URLField(max_length=200, default='http://www.boiager.cat')
 
 	def __unicode__(self):
 		return u'%s' % self.name
 
 	def __str__(self):
-		return self.name
+		return str(self.id) + ' - ' + self.name
 
 	def get_boies(self):
 		return Boia.objects.filter(centre=self)
@@ -45,6 +46,14 @@ class Centre(models.Model):
 		try:
 			boies = self.get_boies()
 			coords = boies.aggregate(max_lat=Max('lat'), max_lng=Max('lng'), min_lat=Min('lat'), min_lng=Min('lng'))
+			if self.lat > coords['max_lat']:
+				coords['max_lat'] = self.lat
+			elif self.lat < coords['min_lat']:
+				coords['min_lat'] = self.lat
+			if self.lng > coords['max_lng']:
+				coords['max_lng'] = self.lng
+			elif self.lng < coords['min_lng']:
+				coords['min_lng'] = self.lng
 			lat = (coords['max_lat'] + coords['min_lat'])/2
 			lng = (coords['max_lng'] + coords['min_lng'])/2
 		except:
@@ -54,17 +63,18 @@ class Centre(models.Model):
 		return map_centre
 
 	def generate_tokens(self, num):
-		email_body = 'Nous codis d\'accés generats' + self.name + '\n\n'
-		for i in range(num):
-			token = str(uuid4())
-			email_body += '\n' + token
-			token_obj = Token(centre=self, token=token)
-			token_obj.save()
-		try:
-			email = EmailMessage('Nous codis d\'accés generats', email_body, to=[self.email])
-			email.send()
-		except:
-			pass
+		if not self.is_public:
+			email_body = 'Nous codis d\'accés generats' + self.name + '\n\n'
+			for i in range(num):
+				token = str(uuid4())
+				email_body += '\n' + token
+				token_obj = Token(centre=self, token=token)
+				token_obj.save()
+			try:
+				email = EmailMessage('Nous codis d\'accés generats', email_body, to=[self.email])
+				email.send()
+			except:
+				pass
 
 	class Meta:
 		db_table = "centre"
@@ -274,15 +284,23 @@ class Registre_boia(models.Model):
 
 class Token(models.Model):
 	centre = models.ForeignKey(Centre, default=None)
+	user = models.ForeignKey(User, default=None, null=True, blank=True)
 	token = models.CharField(max_length=36, unique=True)
 	used = models.BooleanField(default=False)
 	being_used = models.BooleanField(default=False)
+	expire_date = models.DateTimeField(null=True, blank=True)
 
 	def __unicode__(self):
 		return u''+self.token
 
 	def __str__(self):
 		return self.token
+
+	def use(self, user):
+		self.used = 1
+		self.expire_date = datetime.now() + relativedelta(months=3)
+		self.user = user
+		self.save()
 
 	class Meta:
 		db_table = "token"

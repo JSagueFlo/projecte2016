@@ -1,6 +1,7 @@
 from .models import Centre, Boia, Registre_boia, Token
 from django.shortcuts import render_to_response, redirect, render
 from django.contrib import messages
+from django.utils import timezone
 
 
 
@@ -43,3 +44,11 @@ def token_validates(token):
 		return True
 	except:
 		return False
+
+
+def check_expired_tokens(user):
+	tokens = Token.objects.filter(user=user)
+	for token in tokens:
+		if token.expire_date <= timezone.now():
+			centre = token.centre
+			centre.user.remove(user)

@@ -5,10 +5,10 @@ from .models import Centre, Boia, Registre_boia, Token, Slider
 
 
 class CentreAdmin(admin.ModelAdmin):
-    list_display = ('name', 'nie')
+    list_display = ('id','name', 'lat', 'lng')
 
 class BoiaAdmin(admin.ModelAdmin):
-    list_display = ('location_name', 'centre')
+    list_display = ('id', 'centre', 'location_name', 'lat', 'lng')
 
 class RegistreBoiaAdmin(admin.ModelAdmin):
 	list_display = ('boia', 'timestamp')

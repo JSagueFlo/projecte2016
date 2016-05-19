@@ -30,6 +30,9 @@
         var url = '/centre/' + {{centre.id}} + '/';
         var lat = {{map_centre.lat|floatformat:7}};
         var lng = {{map_centre.lng|floatformat:7}};
+        var centre_lat = {{ centre.lat }};
+        var centre_lng = {{ centre.lng }};
+        var centre_name = '{{ centre.name }}';
         var data = {{data|safe}};
         var boies = data.map(function(boia) {
             return boia.fields;

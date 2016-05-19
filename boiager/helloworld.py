@@ -13,9 +13,9 @@ from datetime import datetime, date, timedelta
 '''
 	DEFINEIX ELS PARÀMETERS AQUÍ
 '''
-id_boia = 6
-data_inici = datetime(2015, 12, 31)
-data_final = datetime(2017, 1, 1)
+id_boia = 1
+data_inici = datetime(2016, 4, 1)
+data_final = datetime(2016, 5, 12)
 '''
 	FI DEFINICIÓ DELS PARÀMETRES
 '''
