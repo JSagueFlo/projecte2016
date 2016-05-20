@@ -2,7 +2,6 @@ from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
 from django import forms
 
 class SignupForm(UserCreationForm):
-    email = forms.EmailField(required=True)
 
     def __init__(self, *args, **kwargs):
         super(SignupForm, self).__init__(*args, **kwargs)

@@ -70,8 +70,9 @@
                     <div class="col s8"><div id="chart_vent" style="width: 100%; height: 225px; margin-top: 35px; margin-bottom: 70px"></div></div>
                 </div>
             </div>
-            <div class="col s4 offset-s1">
+            <div class="col s4 offset-s1" onload="createImageLayer();">
                 <div id="map" class="map_boia_actual"></div>
+                <div id="webcam"><noscript><img src="/?action=snapshot" /></noscript></div>
             </div>
         </div>
     </div>
@@ -93,12 +94,16 @@
 
         // CHART
         var ultims_registres = {{ ultims_registres|safe }};
+
+        // STREAM
+        var stream_url = '{{ boia.id }}';
     </script>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript" src="/static/js/menu.js"></script>
     <script type="text/javascript" src="/static/js/calendar.js"></script>
     <script type="text/javascript" src="/static/js/boia_map.js"></script>
     <script type="text/javascript" src="/static/js/boia_live_charts.js"></script>
+    <script type="text/javascript" src="/static/js/boia_live_stream.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCxxnEczYMOs4eAAM-RMTvFPzK5xxLn_NE&callback=initMap"
         async defer></script>
 {% endblock %}

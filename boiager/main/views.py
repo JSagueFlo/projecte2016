@@ -58,6 +58,7 @@ def signup(request):
 				if form.is_valid():
 					new_user = form.save()
 					if new_user is not None:
+
 						centre.user.add(new_user)
 						token_obj.use(new_user)
 						if Token.objects.filter(centre=centre, used=0).count() == 0:
@@ -96,7 +97,7 @@ def login(request):
 		username = request.POST['username']
 		password = request.POST['password']
 		user = authenticate( username = username, password = password)
-		if user is not None:
+		if user is not None and user.is_active:
 			auth_login(request, user)
 			messages.add_message(request, messages.SUCCESS, "Benvingut a Boiager!")
 			return redirect('/')
@@ -159,8 +160,59 @@ def codi(request):
 
 
 def dashboard(request):
-	context = {}
+	if request.user.is_authenticated:
+		check_expired_tokens(request.user)
+		if request.method == 'GET':
+			if 'token' in request.GET.keys():
+				try:
+					token = request.GET["token"]
+					if token_validates(token):
+						token_obj = Token.objects.get(token=token)
+						token_obj.use(request.user)
+						centre = Centre.objects.get(token=token_obj)
+						centre.user.add(request.user)
+						messages.add_message(request, messages.SUCCESS, centre.name + ' vinculat al teu compte amb èxit!')
+						return redirect('/dashboard')
+					else:
+						messages.add_message(request, messages.ERROR, "El codi que has introduït és invàlid!")
+						return redirect('/dashboard')
+				except:
+					messages.add_message(request, messages.ERROR, "Error intern! :(")
+					return redirect('/dashboard')
+		elif request.method == 'POST':
+			request.user.first_name = request.POST['first_name']
+			request.user.last_name = request.POST['last_name']
+			request.user.email = request.POST['email']
+			request.user.save()
+
+		centres = Centre.objects.filter(user=request.user)
+	else:
+		return redirect('/')
+	context = {'centres': centres}
 	return render(request, 'dashboard.html', context)
+
+
+def elimina_centre(request, centre_id):
+	if request.user.is_authenticated:
+		try:
+			user = request.user
+			centre = Centre.objects.get(pk=int(centre_id))
+			centre.user.remove(user)
+			messages.add_message(request, messages.SUCCESS, centre.name + ' desvinculat del teu compte amb èxit!')
+			return redirect('/dashboard')
+		except:
+			messages.add_message(request, messages.WARNING, 'Error al intentar desvincular el centre ' + centre.name)
+			return redirect('/dashboard')
+	else:
+		return redirect('/')
+
+
+def elimina_user(request):
+	user = request.user
+	auth_logout(request)
+	user.is_active = 0
+	user.save()
+	return redirect('/')
 
 
 ##################

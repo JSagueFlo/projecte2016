@@ -93,6 +93,7 @@ class Boia(models.Model):
 	has_cam = models.BooleanField(default=True)
 	location_img = models.CharField(max_length=100, blank=True, null=True)
 	location_name = models.CharField(max_length=200)
+	ip = models.CharField(max_length=20, blank=True, null=True, default='80.174.145.128:8080')
 
 	def __unicode__(self):
 		return self.location_name
@@ -271,6 +272,7 @@ class Registre_boia(models.Model):
 	tmp_air = models.DecimalField(max_digits=6, decimal_places=3, default=0.0)
 	tmp_water = models.DecimalField(max_digits=6, decimal_places=3, default=0.0)
 	wind_speed = models.DecimalField(max_digits=6, decimal_places=3, default=0.0)
+	humiext = models.DecimalField(max_digits=6, decimal_places=3, default=0.0)
 
 	def __unicode__(self):
 		return u''+str(self.timestamp)
