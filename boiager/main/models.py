@@ -37,12 +37,24 @@ class Centre(models.Model):
 		return str(self.id) + ' - ' + self.name
 
 	def get_boies(self):
+		"""
+		Retorna la llista de boies del centre
+		:return: llista de boies
+		"""
 		return Boia.objects.filter(centre=self)
 
 	def get_boies_count(self):
+		"""
+		Retorna el número de boies del centre
+		:return: número de boies del centre
+		"""
 		return len(Boia.objects.filter(centre=self))
 
 	def get_map_coords(self):
+		"""
+		Retorna el centre de coordenades en funció de la distancia entre boies del centre, si no hi ha boies, retorna les coordenades del centre
+		:return: diccionari amb la latitud i longitud del centre
+		"""
 		try:
 			boies = self.get_boies()
 			coords = boies.aggregate(max_lat=Max('lat'), max_lng=Max('lng'), min_lat=Min('lat'), min_lng=Min('lng'))
@@ -63,6 +75,11 @@ class Centre(models.Model):
 		return map_centre
 
 	def generate_tokens(self, num):
+		"""
+		Genera tokens vinculats al centre i envia un correu al administrador amb la informació generada
+		:param num: número de tokens a generar
+		:return: void
+		"""
 		if not self.is_public:
 			email_body = 'Nous codis d\'accés generats' + self.name + '\n\n'
 			for i in range(num):
@@ -83,7 +100,13 @@ class Centre(models.Model):
 
 @receiver(post_save, sender=Centre)
 def after_Centre_save(sender, instance, **kwargs):
-     instance.generate_tokens(10)
+	"""
+	Després de guardar un centre, executa el mètode generate_tokens d'aquell centre
+	:param sender: indica el model que envia l'event
+	:param instance: indica l'objecte sobre el qual s'ha de treballar
+	:return: void
+	"""
+	instance.generate_tokens(10)
 
 
 class Boia(models.Model):
@@ -101,40 +124,48 @@ class Boia(models.Model):
 	def __str__(self):
 		return self.location_name
 
-	def get_anys(self):
-		arrayDades = Registre_boia.objects.filter(boia=self).values('timestamp')
-		arrayYears = []
-		for date in arrayDades:
-			arrayYears.append( int(date['timestamp'].year) )
-		arrayYears = list(set(arrayYears))
-		arrayYears.sort(reverse=True)
-		return arrayYears
-
-	def get_mesos(self, anyy):
-		arrayDades = Registre_boia.objects.filter(boia=self).filter(timestamp__year=anyy).values('timestamp')
-		arrayMesos = []
-		for date in arrayDades:
-			arrayMesos.append( int(date['timestamp'].month) )
-		arrayMesos = list(set(arrayMesos))
-		arrayMesos.sort(reverse=True)
-		return arrayMesos
-		
-	def get_dies(self, anyy, mes):
-		arrayDades = Registre_boia.objects.filter(boia=self).filter(timestamp__year=anyy).values('timestamp')
-		arrayDies = []
-		for date in arrayDades:
-			if mes == int(date['timestamp'].month):
-				arrayDies.append( int(date['timestamp'].day) )
-		arrayDies = list(set(arrayDies))
-		arrayDies.sort(reverse=True)
-		return arrayDies
+	# def get_anys(self):
+	# 	arrayDades = Registre_boia.objects.filter(boia=self).values('timestamp')
+	# 	arrayYears = []
+	# 	for date in arrayDades:
+	# 		arrayYears.append( int(date['timestamp'].year) )
+	# 	arrayYears = list(set(arrayYears))
+	# 	arrayYears.sort(reverse=True)
+	# 	return arrayYears
+    #
+	# def get_mesos(self, anyy):
+	# 	arrayDades = Registre_boia.objects.filter(boia=self).filter(timestamp__year=anyy).values('timestamp')
+	# 	arrayMesos = []
+	# 	for date in arrayDades:
+	# 		arrayMesos.append( int(date['timestamp'].month) )
+	# 	arrayMesos = list(set(arrayMesos))
+	# 	arrayMesos.sort(reverse=True)
+	# 	return arrayMesos
+	#
+	# def get_dies(self, anyy, mes):
+	# 	arrayDades = Registre_boia.objects.filter(boia=self).filter(timestamp__year=anyy).values('timestamp')
+	# 	arrayDies = []
+	# 	for date in arrayDades:
+	# 		if mes == int(date['timestamp'].month):
+	# 			arrayDies.append( int(date['timestamp'].day) )
+	# 	arrayDies = list(set(arrayDies))
+	# 	arrayDies.sort(reverse=True)
+	# 	return arrayDies
 
 	def get_dates_min_max(self):
+		"""
+		Retorna la primera i última data en que hi ha registres de la boia
+		:return: array primera i ultima data
+		"""
 		d1 = Registre_boia.objects.first().timestamp.date()
 		d2 = Registre_boia.objects.last().timestamp.date()
 		return [d1,d2]
 
 	def get_dates(self):
+		"""
+		Retorna un diccionari de diccionaris que conté l'estructura temporal en el qual hi ha dades d'una boia (any, mes, dia)
+		:return: diccionari
+		"""
 		d1 = Registre_boia.objects.filter(boia=self).first().timestamp.date()
 		d2 = Registre_boia.objects.filter(boia=self).last().timestamp.date()
 		delta = d2 - d1
@@ -154,14 +185,27 @@ class Boia(models.Model):
 		return dates
 
 	def get_registre_actual(self):
+		"""
+		Retorna l'últim registre de la boia
+		:return: últim registre
+		"""
 		return Registre_boia.objects.filter(boia=self).last()
 
 
 	def get_latest_registres(self):
+		"""
+		Retorna els últims 10 registres de la boia
+		:return: llista dels últims 10 registres
+		"""
 		ultims = Registre_boia.objects.filter(boia=self).order_by('-id')[:10]
 		return reversed(ultims)
 
 	def get_registres_anuals(self, year):
+		"""
+		Retorna les mitjanes dels registres mensuals de la boia durant un any en concret, de gener a desembre
+		:param year: any
+		:return: array de mitjanes mensuals
+		"""
 		month = connection.ops.date_trunc_sql('month', 'timestamp')
 		registres_year = Registre_boia.objects.filter(boia=self).filter(timestamp__contains=year)
 		registres = registres_year.extra({'month': month}).values('month').annotate(\
@@ -182,6 +226,12 @@ class Boia(models.Model):
 
 
 	def get_registres_mensuals(self, year, month):
+		"""
+		Retorna les mitjanes del registres diaris de la boia durant un mes i any concret, del 1 al últim dia del mes
+		:param year: any
+		:param month: mes
+		:return: array de mitjanes diàries
+		"""
 		month = str(month) if month >= 10 else '0' + str(month)
 		day = connection.ops.date_trunc_sql('day', 'timestamp')
 		registres_month = Registre_boia.objects.filter(boia=self).filter(timestamp__contains=str(year)+'-'+str(month))
@@ -203,6 +253,13 @@ class Boia(models.Model):
 
 
 	def get_registres_diaris(self, year, month, day):
+		"""
+		Retorna les mitjanes del registres horaris de la boia durant un dia, mes i any concret, de les 00:00 a les 23:00
+		:param year: any
+		:param month: mes
+		:param day: dia
+		:return: array de mitjanes horaries
+		"""
 		month = str(month) if month >= 10 else '0' + str(month)
 		day = str(day) if day >= 10 else '0' + str(day)
 		registres_month = Registre_boia.objects.filter(boia=self).filter(timestamp__contains=str(year) + '-' + str(month))
@@ -224,6 +281,10 @@ class Boia(models.Model):
 
 
 	def get_registres_max_min_today(self):
+		"""
+		Retorna un diccionari amb els valors màxims i mínims d'avui
+		:return: diccionari de valors màxims i mínims
+		"""
 		today = localtime(now()).date()
 		return Registre_boia.objects.filter(boia=self)\
 									.filter(timestamp__contains=today)\
@@ -237,6 +298,13 @@ class Boia(models.Model):
 
 
 	def get_registres_max_min_avg(self, year=None, month=None, day=None):
+		"""
+		Retorna un diccionari amb els valors màxims mínims i mitjans d'un dia, mes o any en concret
+		:param year: any
+		:param month: mes, opcional
+		:param day: dia, opcional
+		:return:
+		"""
 		string_data = ''
 		if year is not None:
 			string_data += str(year)
@@ -299,6 +367,11 @@ class Token(models.Model):
 		return self.token
 
 	def use(self, user):
+		"""
+		Vincula un usuari amb un token, actualitza la data d'expiració perqué caduqui al cap de 3 mesos, i canvia l'estat del token a used
+		:param user: usuari
+		:return: void
+		"""
 		self.used = 1
 		self.expire_date = datetime.now() + relativedelta(months=3)
 		self.user = user

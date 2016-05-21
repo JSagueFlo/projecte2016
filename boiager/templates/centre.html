@@ -7,18 +7,13 @@
     <div class="section">
         <h5>{{ centre.name }}</h5>
         <div class="row">
-            <div class="col s4">
+            <div class="col s12 m5 l4">
             <p>{{ centre.description }}</p>
             {% if centre.img %}
                 <div class="section"><img src="{{centre.img}}" alt=""></div>
             {% endif %}
-            {% comment %}{% if boies %}
-                {% for boia in boies %}
-                    <p>Boia {{boia.location_name}}</p>
-                {% endfor %}
-            {% endif %}{% endcomment %}
             </div>
-            <div class="col s8">
+            <div class="col s12 m7 l8">
                 <div id="map"></div>
             </div>
         </div>

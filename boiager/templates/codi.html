@@ -2,11 +2,11 @@
 {% block content %}
 <div class="section">
 	<div class="row">
-		<div class="col s8 offset-s2">
+		<div class="col s12 m12 l10 offset-l1">
             {% if user.is_authenticated %}
             <h4>Afegir un centre</h4>
 			<div class="divider"></div>
-			<form method="GET" class="form">
+			<form method="GET" class="form col s12 m10 l8 offset-m1 offset-l2">
 				<p>
                     <label for="token">Codi:</label>
                     <input autofocus="" id="token" maxlength="36" name="token" type="text" required />
@@ -16,7 +16,7 @@
             {% else %}
 			<h4>Pas 1: Entra el codi del teu centre</h4>
 			<div class="divider"></div>
-			<form method="GET" action='/signup' class="form">
+			<form method="GET" action='/signup' class="form col s12 m10 l8 offset-m1 offset-l2">
 				<p>
                     <label for="token">Codi:</label>
                     <input autofocus="" id="token" maxlength="36" name="token" type="text" required />

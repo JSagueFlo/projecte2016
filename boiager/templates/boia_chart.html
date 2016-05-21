@@ -15,73 +15,77 @@
     </div>
     <div class="divider"></div>
     <div class="section">
-        <div class="row">
-            <div class="col s8">
-                <h5>{{ boia.location_name }} <i class="material-icons" id="calendar">date_range</i></h5>
-                {% if day %}{{ day }} /{% endif %}
-                {% if month %}{{ month|month_name }} /{% endif %}
-                {% if year %}{{ year }}{% endif %}
-            </div>
-            <div class="col s4">
-                <div id="map" class="map_boia_history"></div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="section">
-                <h6 class="statscard-title"><i class="wi wi-raindrop"></i> Temperatura de l'aigua</h6>
-                <div class="divider"></div>
-                <div class="col s2 statscard">
-                    <p class="statscard-label_actual">Mitjana</p>
-                    <p class="statscard-stat_actual">{{ max_min.tmp_aigua_mitjana|floatformat:1 }} <i class="wi wi-celsius"></i></p>
-
-                    <p class="statscard-label">Màxima</p>
-                    <p class="statscard-stat">{{ max_min.tmp_aigua_maxima|floatformat:1 }} <i class="wi wi-celsius"></i></p>
-
-                    <p class="statscard-label">Mínima</p>
-                    <p class="statscard-stat">{{ max_min.tmp_aigua_minima|floatformat:1 }} <i class="wi wi-celsius"></i></p>
+        <div class="col s10 offset-s1">
+            <div class="row">
+                <div class="col s12 m6 l8">
+                    <h5>{{ boia.location_name }} <i class="material-icons" id="calendar">date_range</i></h5>
+                    {% if day %}{{ day }} /{% endif %}
+                    {% if month %}{{ month|month_name }} /{% endif %}
+                    {% if year %}{{ year }}{% endif %}
                 </div>
-                <div class="col s10"><div id="chart_aigua" style="width: 100%; height: 250px; margin-top: 35px; margin-bottom: 70px"></div></div>
-            </div>
-            <div class="section">
-                <h6 class="statscard-title"><i class="wi wi-thermometer-exterior"></i> Temperatura de l'aire</h6>
-                <div class="divider"></div>
-                <div class="col s2 statscard">
-                    <p class="statscard-label_actual">Mitjana</p>
-                    <p class="statscard-stat_actual">{{ max_min.tmp_aire_mitjana|floatformat:1 }} <i class="wi wi-celsius"></i></p>
-
-                    <p class="statscard-label">Màxima</p>
-                    <p class="statscard-stat">{{ max_min.tmp_aire_maxima|floatformat:1 }} <i class="wi wi-celsius"></i></p>
-
-                    <p class="statscard-label">Mínima</p>
-                    <p class="statscard-stat">{{ max_min.tmp_aire_minima|floatformat:1 }} <i class="wi wi-celsius"></i></p>
+                <div class="col s12 m6 l4">
+                    <div id="map" class="map_boia_history"></div>
                 </div>
-                <div class="col s10"><div id="chart_aire" style="width: 100%; height: 250px; margin-top: 35px; margin-bottom: 70px"></div></div>
             </div>
-            <div class="section">
-                <h6 class="statscard-title"><i class="wi wi-strong-wind"></i> Velocitat del vent</h6>
-                <div class="divider"></div>
-                <div class="col s2 statscard">
-                    <p class="statscard-label_actual">Mitjana</p>
-                    <p class="statscard-stat_actual">{{ max_min.wind_speed_mitjana|floatformat:1 }} <span class="statscard-unit_actual">Km/h</span></p>
-
-                    <p class="statscard-label">Màxima</p>
-                    <p class="statscard-stat">{{ max_min.wind_speed_maxima|floatformat:1 }} <span class="statscard-unit">Km/h</span></p>
-
-                    <p class="statscard-label">Mínima</p>
-                    <p class="statscard-stat">{{ max_min.wind_speed_minima|floatformat:1 }} <span class="statscard-unit">Km/h</span></p>
+            <div class="row">
+                <div class="section">
+                    <h6 class="statscard-title"><i class="wi wi-raindrop"></i> Temperatura de l'aigua (&#8451;)</h6>
+                    <div class="divider"></div>
+                    <div class="col s12 m12 l4 statscard">
+                        <div class="col s4 m4 l12">
+                            <p class="statscard-label_actual">Mitjana</p>
+                            <p class="statscard-stat_actual">{{ max_min.tmp_aigua_mitjana|floatformat:1 }} <i class="wi wi-celsius"></i></p>
+                        </div>
+                        <div class="col s4 m4 l12">
+                            <p class="statscard-label">Màxima</p>
+                            <p class="statscard-stat">{{ max_min.tmp_aigua_maxima|floatformat:1 }} <i class="wi wi-celsius"></i></p>
+                        </div>
+                        <div class="col s4 m4 l12">
+                            <p class="statscard-label">Mínima</p>
+                            <p class="statscard-stat">{{ max_min.tmp_aigua_minima|floatformat:1 }} <i class="wi wi-celsius"></i></p>
+                        </div>
+                    </div>
+                    <div class="col s12 m12 l8"><div id="chart_aigua" class="chart-custom"></div></div>
                 </div>
-                <div class="col s10"><div id="chart_vent" style="width: 100%; height: 250px; margin-top: 35px; margin-bottom: 70px"></div></div>
+                <div class="section">
+                    <h6 class="statscard-title"><i class="wi wi-thermometer-exterior"></i> Temperatura de l'aire (&#8451;)</h6>
+                    <div class="divider"></div>
+                    <div class="col s12 m12 l4 statscard">
+                        <div class="col s4 m4 l12">
+                        <p class="statscard-label_actual">Mitjana</p>
+                        <p class="statscard-stat_actual">{{ max_min.tmp_aire_mitjana|floatformat:1 }} <i class="wi wi-celsius"></i></p>
+                        </div>
+                        <div class="col s4 m4 l12">
+                            <p class="statscard-label">Màxima</p>
+                            <p class="statscard-stat">{{ max_min.tmp_aire_maxima|floatformat:1 }} <i class="wi wi-celsius"></i></p>
+                        </div>
+                        <div class="col s4 m4 l12">
+                            <p class="statscard-label">Mínima</p>
+                            <p class="statscard-stat">{{ max_min.tmp_aire_minima|floatformat:1 }} <i class="wi wi-celsius"></i></p>
+                        </div>
+                    </div>
+                    <div class="col s12 m12 l8"><div id="chart_aire" class="chart-custom"></div></div>
+                </div>
+                <div class="section">
+                    <h6 class="statscard-title"><i class="wi wi-strong-wind"></i> Velocitat del vent (Km/h)</h6>
+                    <div class="divider"></div>
+                    <div class="col s12 m12 l4 statscard">
+                        <div class="col s4 m4 l12">
+                            <p class="statscard-label_actual">Mitjana</p>
+                            <p class="statscard-stat_actual">{{ max_min.wind_speed_mitjana|floatformat:1 }} <span class="statscard-unit_actual">Km/h</span></p>
+                        </div>
+                        <div class="col s4 m4 l12">
+                            <p class="statscard-label">Màxima</p>
+                            <p class="statscard-stat">{{ max_min.wind_speed_maxima|floatformat:1 }} <span class="statscard-unit">Km/h</span></p>
+                        </div>
+                        <div class="col s4 m4 l12">
+                            <p class="statscard-label">Mínima</p>
+                            <p class="statscard-stat">{{ max_min.wind_speed_minima|floatformat:1 }} <span class="statscard-unit">Km/h</span></p>
+                        </div>
+                    </div>
+                    <div class="col s12 m12 l8"><div id="chart_vent" class="chart-custom"></div></div>
+                </div>
             </div>
-
-            {% comment %}<div class="col s4">
-            {% if boia.location_img %}
-                <div class="section"><img src="{{boia.location_img}}" alt=""></div>
-            {% endif %}
-            </div>{% endcomment %}
-
-            {% comment %}<div class="col s5 offset-s1">
-                <div id="map"></div>
-            </div>{% endcomment %}
         </div>
     </div>
 {% endblock %}

@@ -2,14 +2,14 @@
 {% block content %}
 <div class="section">
 	<div class="row">
-    <div class="col s2">
+    <div class="col s12 m12 l3">
       <ul class="tabs">
-        <li class="tab col s10"><h6>Dashboard</h6></li>
+        <li class="tab col s10 hide-on-med-and-down"><h6>Dashboard</h6></li>
         <li class="tab col s10"><a href="#centres" class="active">Centres</a></li>
         <li class="tab col s10"><a href="#privacitat">Privacitat</a></li>
       </ul>
     </div>
-    <div id="centres" class="col s8 offset-s1">
+    <div id="centres" class="col s12 m12 l8 offset-l1">
         <h5>Configuració dels centres</h5>
         <div class="divider"></div>
         <div class="section">
@@ -53,7 +53,7 @@
         </div>
         {% endif %}
     </div>
-    <div id="privacitat" class="col s8 offset-s1">
+    <div id="privacitat" class="col s12 m12 l8 offset-l1">
         <h5>Configuració de la privacitat</h5>
         <div class="divider"></div>
         <div class="section">
@@ -83,6 +83,13 @@
                 <h6>Dades d'usuari</h6>
                 <p>Registrat desde: <span style="font-weight: 100"> {{ request.user.date_joined|date:'j \d\e M \d\e Y' }}</span></p>
                 <p>Ultima connexió: <span style="font-weight: 100"> {{ request.user.last_login|date:'j \d\e M \d\e Y \a \l\e\s H:i' }}</span></p>
+            </div>
+        </div>
+        <div class="section">
+            <div class="col s12">
+                <div class="divider" style="margin: 20px 0;"></div>
+                <h6>Canviar la contrasenya</h6>
+                <div class="section"><a href="/change_password" class="secondary-content btn-flat left" style="background: #ffcc80;">Canvia la contrasenya</a></div>
             </div>
         </div>
         <div class="section">

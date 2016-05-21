@@ -19,35 +19,7 @@ main {
     flex: 1 0 auto;
 }
 
-/* TABS */
 
-ul.tabs {
-	flex-direction: column;
-	height: 100%;
-	float: left;
-	width: 20%;
-	text-align: left;
-}
-
-ul.tabs a {
-	color: #009688 !important;
-	text-align: left;
-	padding-left: 15px;
-	background-color: #f2fafa;
-}
-
-ul.tabs li {
-	margin-bottom: 5px !important;
-}
-
-ul.tabs .indicator {
-	display: none;
-}
-
-ul.tabs a.active {
-	font-weight: 400;
-	border-left: 2px solid #009688;
-}
 
 .slider img {
 	-webkit-filter: blur(1px) brightness(60%);
@@ -146,7 +118,7 @@ img {
 
 .statscard-title {
 	text-align: left;
-	letter-spacing: 5px;
+	letter-spacing: 3px;
 	text-transform: uppercase;
 }
 
@@ -327,6 +299,101 @@ img {
 	top: 4px;
 	color: #009688;
 	cursor: pointer;
+}
+
+.chart-custom {
+	width: 100%;
+	height: 225px;
+	margin-top: 35px;
+	margin-bottom: 70px;
+}
+
+
+/* TABS */
+
+ul.tabs a {
+		color: #009688 !important;
+		background-color: #f2fafa;
+	}
+ul.tabs a.active {
+	font-weight: 400;
+	border-bottom-color: #009688;
+}
+
+.indicator {
+	background-color: #009688 !important;
+}
+
+@media screen and (min-width: 992px) {
+	ul.tabs {
+		flex-direction: column;
+		height: 100%;
+		float: left;
+		width: 20%;
+		text-align: left;
+	}
+
+	ul.tabs a {
+		color: #009688 !important;
+		text-align: left;
+		padding-left: 15px;
+		background-color: #f2fafa;
+	}
+
+	ul.tabs li {
+		margin-bottom: 5px !important;
+	}
+
+	ul.tabs .indicator {
+		display: none;
+	}
+
+	ul.tabs a.active {
+		font-weight: 400;
+		border-left: 2px solid #009688;
+	}
+}
+
+@media screen and (max-width: 992px) {
+	.statscard-stat {
+		font-size: 36px;
+	}
+	.statscard-stat, .statscard-stat_actual {
+		text-align: center;
+	}
+
+	.statscard-label_actual {
+		margin-top: 10px;
+	}
+
+	.statscard {
+		margin-bottom: 0;
+	}
+
+	#chart_aigua, #chart_aire, #chart_vent {
+		margin-top: 0;
+	}
+
+	.statscard i, .statscard-unit, .statscard-unit_actual {
+		display: none;
+	}
+
+	.user-action-btn > a{
+		margin-right: 5px !important;
+		margin-left: 0 !important;
+	}
+
+	#logo {
+		margin-right: 20px !important;
+	}
+}
+
+@media screen and (max-width: 600px) {
+	#map-container {
+		padding: 0;
+		margin-bottom: 10px;
+		margin-top: 10px;
+	}
 }
 
 
