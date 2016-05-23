@@ -1,3 +1,4 @@
+// Opcions del calendari 
 $('#calendar').pickadate({
     min: min_data,
     max: max_data,
@@ -14,6 +15,7 @@ $('#calendar').pickadate({
     selectYears: true,
 });
 
+// En seleccionar un dia, redireccionar a la pàgina corresponent
 $('#calendar').on('change', function(){
     var data = $(this).val().split('/');
     window.location.href = url + data[0] + '/' + data[1] + '/' + data[2] + '/';

@@ -1,8 +1,10 @@
+// Funció que converteix el número de mes al seu nom
 function mesToString(mes) {
     mesos = ['','Gener', 'Febrer', 'Març', 'Abril', 'Maig', 'Juny', 'Juliol', 'Agost', 'Setembre', 'Octubre', 'Novembre', 'Desembre'];
     return mesos[parseInt(mes)];
 }
 
+// Creació de l'estructura del menu a partir de l'objecte dates
 $('#sidebar').append('<ul id="menu"></ul>');
 
 for (var any in dates) {

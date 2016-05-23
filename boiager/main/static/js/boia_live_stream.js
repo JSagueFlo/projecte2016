@@ -3,6 +3,7 @@
    under the terms of the GNU General Public License, version 2. See the file
    COPYING for details. */
 
+// Funcions necessàries per refrescar la imatge de l'stream
 var imageNr = 0; // Serial number of current image
 var finished = new Array(); // References to img objects which have finished downloading
 var paused = false;

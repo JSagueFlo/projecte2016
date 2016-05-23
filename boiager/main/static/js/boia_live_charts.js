@@ -1,3 +1,5 @@
+// Configuració de les gràfiques en viu que es refresquen cada 5s mitjançant AJAX
+
 var ultims = ultims_registres.map(function(reg) {
     return reg.fields;
 });

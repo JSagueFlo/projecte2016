@@ -1,3 +1,4 @@
+
 var url = '/centre/';
 var lat = 41.732895;
 var lng = 1.793109;
@@ -13,6 +14,8 @@ centres_privats.map(function(centre, i) {
 
 var map;
 var markers = {};
+
+// Inicialitzar el mapa que mostra tots els centres
 function initMap() {
     map = new google.maps.Map(document.getElementById('map'), {
         center: {lat: lat, lng: lng },
@@ -29,7 +32,7 @@ function initMap() {
             title: centres[i].name,
             map: map,
             title: centres[i].location_name,
-            icon: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png', //centres[i].isPublic ? 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png': 'http://maps.google.com/mapfiles/ms/icons/red-dot.png',
+            icon: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png',
             centre_id: centres[i].id
         });
         markers[centres[i].id] = marker;
@@ -39,11 +42,13 @@ function initMap() {
     }
 }
 
+// Events
+
+// En hover al nom del centre, ressaltar el marker del centre corresponent
 $('.centres').on('mouseover', function() {
     var id = $(this).attr('id');
     markers[id].setIcon("http://maps.google.com/mapfiles/ms/icons/yellow-dot.png")
 });
-
 $('.centres').on('mouseout', function() {
     var id = $(this).attr('id');
     markers[id].setIcon("http://maps.google.com/mapfiles/ms/icons/red-dot.png")

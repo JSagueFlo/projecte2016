@@ -1,3 +1,5 @@
+// Configuració de les gràfiques històriques
+
 var chart_aigua_data = [['','Temp Aigua']];
 var chart_aire_data = [['','Temp Aire']];
 var chart_vent_data = [['','Vent']];

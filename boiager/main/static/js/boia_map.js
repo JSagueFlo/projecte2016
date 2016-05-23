@@ -1,4 +1,6 @@
 var map;
+
+// Inicialitzar el mapa que localitza una boia
 function initMap() {
     map = new google.maps.Map(document.getElementById('map'), {
         center: {lat: lat, lng: lng },

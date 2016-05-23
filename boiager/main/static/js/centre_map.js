@@ -1,6 +1,8 @@
 var map;
 var markers = [];
 var info_windows = [];
+
+// Inicialització del mapa que mostra la localització d'un centre i totes les seves boies
 function initMap() {
     map = new google.maps.Map(document.getElementById('map'), {
         center: {lat: lat, lng: lng},
