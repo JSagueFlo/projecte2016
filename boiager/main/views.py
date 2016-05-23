@@ -28,7 +28,7 @@ def home(request):
 
 def pagines(request, label):
 	# Si l'usuari està autenticat
-	if request.user.is_authenticated:
+	if request.user.is_authenticated and str(request.user) != 'AnonymousUser':
 		# Comprobar la vigència dels tokens
 		check_expired_tokens(request.user)
 	context = {'label': label}
@@ -42,7 +42,7 @@ def pagines(request, label):
 def signup(request):
 
 	# Si l'usuari ja està autenticat redirigir al home
-	if request.user.is_authenticated:
+	if request.user.is_authenticated and str(request.user) != 'AnonymousUser':
 		messages.add_message(request, messages.WARNING, "Ja estàs autenticat com a " + request.user.username + ".")
 		return redirect('/')
 
@@ -105,7 +105,7 @@ def signup(request):
 
 def login(request):
 	# Si l'usuari ja està autenticat redirigir al home
-	if request.user.is_authenticated:
+	if request.user.is_authenticated and str(request.user) != 'AnonymousUser':
 		messages.add_message(request, messages.WARNING, "Ja estàs autenticat com a " + request.user.username + ".")
 		return redirect('/')
 
@@ -132,7 +132,7 @@ def login(request):
 def change_password(request):
 
 	# Si l'usuari està autenticat
-	if request.user.is_authenticated:
+	if request.user.is_authenticated and str(request.user) != 'AnonymousUser':
 		# Comprobar la vigència dels tokens
 		check_expired_tokens(request.user)
 		# Omplir el formulari amb les dades que arriven per POST o deixar-lo buit en cas que no hi hagi POST
@@ -169,7 +169,7 @@ def logout(request):
 
 def codi(request):
 	# Si l'usuari està autenticat
-	if request.user.is_authenticated:
+	if request.user.is_authenticated and str(request.user) != 'AnonymousUser':
 		# Comprobar la vigència dels tokens
 		check_expired_tokens(request.user)
 	# Si hi ha GET
@@ -207,7 +207,7 @@ def codi(request):
 
 def dashboard(request):
 	# Si l'usuari està autenticat
-	if request.user.is_authenticated:
+	if request.user.is_authenticated and str(request.user) != 'AnonymousUser':
 		# Comprobar la vigència dels tokens
 		check_expired_tokens(request.user)
 		# Si hi ha GET
@@ -250,7 +250,7 @@ def dashboard(request):
 
 def elimina_centre(request, centre_id):
 	# Si l'usuari està autenticat
-	if request.user.is_authenticated:
+	if request.user.is_authenticated and str(request.user) != 'AnonymousUser':
 		try:
 			user = request.user
 			# Obtenir l'objecte centre a partir de la id del centre
@@ -284,7 +284,7 @@ def centres(request):
 	centres_privats = None
 	privats = []
 	# Si l'usuari està autenticat
-	if request.user.is_authenticated:
+	if request.user.is_authenticated and str(request.user) != 'AnonymousUser':
 		# Comprobar la vigència dels tokens
 		check_expired_tokens(request.user)
 		# Obtenir els centres privats de l'usuari
@@ -301,7 +301,7 @@ def centres(request):
 
 def centre(request, id_centre):
 	# Si l'usuari està autenticat
-	if request.user.is_authenticated:
+	if request.user.is_authenticated and str(request.user) != 'AnonymousUser':
 		# Comprobar la vigència dels tokens
 		check_expired_tokens(request.user)
 	# Comprobar l'existencia del centre i que l'usuari tingui accés a aquell centre
@@ -324,7 +324,7 @@ def centre(request, id_centre):
 
 def boia(request, id_centre, id_boia):
 	# Si l'usuari està autenticat
-	if request.user.is_authenticated:
+	if request.user.is_authenticated and str(request.user) != 'AnonymousUser':
 		# Comprobar la vigència dels tokens
 		check_expired_tokens(request.user)
 	# Comprobar l'existencia del centre i que l'usuari tingui accés a aquell centre
@@ -365,7 +365,7 @@ def boia(request, id_centre, id_boia):
 
 def boia_any(request, id_centre, id_boia, year):
 	# Si l'usuari està autenticat
-	if request.user.is_authenticated:
+	if request.user.is_authenticated and str(request.user) != 'AnonymousUser':
 		# Comprobar la vigència dels tokens
 		check_expired_tokens(request.user)
 	# Comprobar l'existencia del centre i que l'usuari tingui accés a aquell centre
@@ -400,7 +400,7 @@ def boia_any(request, id_centre, id_boia, year):
 
 def boia_mes(request, id_centre, id_boia, year, month):
 	# Si l'usuari està autenticat
-	if request.user.is_authenticated:
+	if request.user.is_authenticated and str(request.user) != 'AnonymousUser':
 		# Comprobar la vigència dels tokens
 		check_expired_tokens(request.user)
 	# Comprobar l'existencia del centre i que l'usuari tingui accés a aquell centre
@@ -436,7 +436,7 @@ def boia_mes(request, id_centre, id_boia, year, month):
 
 def boia_dia(request, id_centre, id_boia, year, month, day):
 	# Si l'usuari està autenticat
-	if request.user.is_authenticated:
+	if request.user.is_authenticated and str(request.user) != 'AnonymousUser':
 		# Comprobar la vigència dels tokens
 		check_expired_tokens(request.user)
 	# Comprobar l'existencia del centre i que l'usuari tingui accés a aquell centre
