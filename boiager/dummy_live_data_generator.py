@@ -1,17 +1,11 @@
 #encoding: utf-8
-'''
-	IMPORTS - NO EDITIS AQUESTES LÍNIES
-'''
+
 from main.models import Boia, Registre_boia, Centre
 import random
 import time
 from datetime import datetime
 
 boies = Boia.objects.all()
-
-#python3 manage.py shell < live_data.py
-
-#Filtre boia
 
 while True:
     for boia in boies:
