@@ -1,10 +1,8 @@
 from django.conf.urls import url, include
 from django.contrib import admin
-import docutils
 from main.views import *
 
 urlpatterns = [
-    url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     url(r'^admin/', admin.site.urls),
 
     url(r'^$', home),
@@ -18,7 +16,6 @@ urlpatterns = [
     url(r'^dashboard/elimina_user/$', elimina_user),
 
     url(r'^pagines/(.+)/$', pagines),
-    #url('^', include('django.contrib.auth.urls')),
     url(r'^centres/$', centres),
     url(r'^centre/([0-9]+)/$', centre),
     url(r'^centre/([0-9]+)/([0-9]+)/$', boia),

@@ -17,7 +17,7 @@ from .models import Centre, Boia, Token, Slider
 
 def home(request):
 	# Si l'usuari està autenticat
-	if request.user.is_authenticated:
+	if request.user.is_authenticated and str(request.user) != 'AnonymousUser':
 		# Comprobar la vigència dels tokens
 		check_expired_tokens(request.user)
 	# Obtenir tots els sliders

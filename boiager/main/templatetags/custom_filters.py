@@ -2,7 +2,7 @@ from django import template
 import calendar
 import locale
 
-locale.setlocale(locale.LC_ALL, 'ca_ES')
+locale.setlocale(locale.LC_ALL, 'ca_ES.UTF-8')
 
 register = template.Library()
 

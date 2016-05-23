@@ -13,8 +13,7 @@ import locale
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-locale.setlocale(locale.LC_ALL, 'ca_ES')
-
+locale.setlocale(locale.LC_ALL, 'ca_ES.UTF-8')
 
 
 # Create your models here.
