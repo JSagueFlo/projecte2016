@@ -13,9 +13,10 @@ from datetime import datetime, date, timedelta
 '''
 	DEFINEIX ELS PARÀMETERS AQUÍ
 '''
-id_boia = 1
-data_inici = datetime(2016, 4, 1)
-data_final = datetime(2016, 5, 12)
+boies = Boia.objects.all()
+
+data_inici = datetime(2015, 5, 23)
+data_final = datetime(2016, 5, 23)
 '''
 	FI DEFINICIÓ DELS PARÀMETRES
 '''
@@ -26,22 +27,19 @@ data_final = datetime(2016, 5, 12)
 print('Creant registres des de ' + str(data_inici) + ' fins ' + str(data_final))
 #python3 manage.py shell < helloworld.py 
 
-#Filtre boia
-boia = Boia.objects.get( id=id_boia )
 
 current_datetime = data_inici
 increment = 3600 #segons
 segonsTotals = (data_final - data_inici).days * ( 60 * 60 * 24)
-print(str(segonsTotals))
 
-for i in range(0, segonsTotals+1, increment):
-	timestamp = current_datetime
-	tmpAir = random.uniform(-5.0, 40.0)
-	tmpWater = random.uniform(5.0, 25.0)
-	windSpeed = random.uniform(0.0, 60.0)
-	nou_registre = Registre_boia(boia=boia, timestamp=timestamp, tmp_air=tmpAir, tmp_water=tmpWater, wind_speed=windSpeed)
-	nou_registre.save()
-	current_datetime = current_datetime + timedelta(seconds=increment) # days, seconds, then other fields.
-	print ( 'Added: ' + str(current_datetime.time()) + str(current_datetime.date()))
+for boia in boies:
+	for i in range(0, segonsTotals+1, increment):
+		timestamp = current_datetime
+		tmpAir = random.uniform(-5.0, 40.0)
+		tmpWater = random.uniform(5.0, 25.0)
+		windSpeed = random.uniform(0.0, 60.0)
+		nou_registre = Registre_boia(boia=boia, timestamp=timestamp, tmp_air=tmpAir, tmp_water=tmpWater, wind_speed=windSpeed)
+		nou_registre.save()
+		current_datetime = current_datetime + timedelta(seconds=increment) # days, seconds, then other fields.
 
 print('end')
